@@ -7,13 +7,13 @@ using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace DeliveryPilots.Application.Handlers.DeliveryMan.Commands.Create;
 
-public class GetCategoryOfDeliveryManHandle : QueryHandler<GetCategoryOfDeliveryManQuery>
+public class GetCategoryOfDeliveryManHandler : QueryHandler<GetCategoryOfDeliveryManQuery>
 {
-    private readonly ILogger<GetCategoryOfDeliveryManHandle> _logger;
+    private readonly ILogger<GetCategoryOfDeliveryManHandler> _logger;
     private readonly IDeliveryManService _deliveryManService;
 
-    private const string NameOfClass = nameof(GetCategoryOfDeliveryManHandle);
-    public GetCategoryOfDeliveryManHandle(ILogger<GetCategoryOfDeliveryManHandle> logger, IDeliveryManService deliveryManService)
+    private const string NameOfClass = nameof(GetCategoryOfDeliveryManHandler);
+    public GetCategoryOfDeliveryManHandler(ILogger<GetCategoryOfDeliveryManHandler> logger, IDeliveryManService deliveryManService)
     {
         _logger = logger;
         _deliveryManService = deliveryManService;

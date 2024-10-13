@@ -5,10 +5,10 @@ namespace NotificationService.Controllers
 {
     [ApiController]
     [Route("notification")]
-    public class WeatherForecastController : ControllerBase
+    public class NotificationController : ControllerBase
     {
         private readonly MongoService _mongoService;
-        public WeatherForecastController(MongoService mongoService)
+        public NotificationController(MongoService mongoService)
         {
             _mongoService = mongoService;
         }

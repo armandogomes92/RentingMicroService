@@ -15,9 +15,27 @@ public class RabbitMQClient
         {
             HostName = _config.Host
         };
-
         _connection = factory.CreateConnection();
         _channel = _connection.CreateModel();
+
+        _channel.QueueDeclare(queue: _config.QueueYear2024,
+                              durable: false,
+                              exclusive: false,
+                              autoDelete: false,
+                              arguments: null);
+
+        _channel.QueueDeclare(queue: _config.QueueRegistered,
+                      durable: false,
+                      exclusive: false,
+                      autoDelete: false,
+                      arguments: null);
+
+        _channel.QueueDeclare(queue: _config.QueueTotalPrice,
+                      durable: false,
+                      exclusive: false,
+                      autoDelete: false,
+                      arguments: null);
+
     }
     public IModel CreateModel()
     {

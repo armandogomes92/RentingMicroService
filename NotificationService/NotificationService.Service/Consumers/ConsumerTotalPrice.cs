@@ -21,11 +21,6 @@ public class ConsumerTotalPrice : BackgroundService
         _rabbitMQClient = rabbitMQClient;
         _config = rabbitMQConfiguration;
         _channel = channel;
-        _channel.QueueDeclare(queue: _config.QueueYear2024,
-                              durable: false,
-                              exclusive: false,
-                              autoDelete: false,
-                              arguments: null);
         _mongoService = mongoDBService;
     }
 

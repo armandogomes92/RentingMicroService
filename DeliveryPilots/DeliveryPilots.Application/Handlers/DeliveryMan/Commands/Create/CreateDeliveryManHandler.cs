@@ -6,13 +6,13 @@ using Microsoft.Extensions.Logging;
 
 namespace DeliveryPilots.Application.Handlers.DeliveryMan.Commands.Create;
 
-public class CreateDeliveryManHandle : CommandHandler<CreateDeliveryManCommand>
+public class CreateDeliveryManHandler : CommandHandler<CreateDeliveryManCommand>
 {
-    private readonly ILogger<CreateDeliveryManHandle> _logger;
+    private readonly ILogger<CreateDeliveryManHandler> _logger;
     private readonly IDeliveryManService _deliveryManService;
 
-    private const string NameOfClass = nameof(CreateDeliveryManHandle);
-    public CreateDeliveryManHandle(ILogger<CreateDeliveryManHandle> logger, IDeliveryManService deliveryManService)
+    private const string NameOfClass = nameof(CreateDeliveryManHandler);
+    public CreateDeliveryManHandler(ILogger<CreateDeliveryManHandler> logger, IDeliveryManService deliveryManService)
     {
         _logger = logger;
         _deliveryManService = deliveryManService;

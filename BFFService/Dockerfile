@@ -4,14 +4,14 @@ WORKDIR /src
 
 # Copie o arquivo de solução e os arquivos de projeto
 COPY *.sln ./
-COPY BFFService/*.csproj ./BFFService/
+COPY *.csproj ./
 
 # Restaure as dependências do projeto
 RUN dotnet restore
 
 # Copie o restante dos arquivos e compile o projeto
 COPY . .
-WORKDIR /src/BFFService
+WORKDIR /src
 RUN dotnet publish -c Release -o /app/publish
 
 # Use a imagem base do runtime do .NET 8 para rodar a aplicação
