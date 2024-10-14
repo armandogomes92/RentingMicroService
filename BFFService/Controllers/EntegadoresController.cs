@@ -11,7 +11,6 @@ namespace BFFService.Controllers
     public class EntegadoresController : ControllerBase
     {
         private readonly IDeliveryManService _deliveryMan;
-        private readonly IDeliveryManService _rest = RestService.For<IDeliveryManService>("https://localhost:5003");
 
         public EntegadoresController(IDeliveryManService deliveryMan)
         {
@@ -26,7 +25,7 @@ namespace BFFService.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] Entregadores entregador)
         {
-            return Ok(await _rest.PostEntregadores(entregador));
+            return Ok(await _deliveryMan.PostEntregadores(entregador));
         }
 
         /// <summary>
@@ -35,7 +34,7 @@ namespace BFFService.Controllers
         [HttpPost("{id}/cnh")]
         public async Task<IActionResult> PostCnh(string id, [FromBody] byte[] imagemCnh)
         {
-            return Ok(await _rest.PostCnh(id, imagemCnh));
+            return Ok(await _deliveryMan.PostCnh(id, imagemCnh));
         }
     }
 }

@@ -6,7 +6,7 @@ Este repositório contém uma coleção de soluções .NET para gerenciamento de
 **Utilizando Docker você navegará até a raiz do projeto no seu terminal e executara e seguint comando**
 ```sh
    docker-compose up --build
-
+```
 ## Estrutura das Soluções
 
 ### RentalMotorcycle

@@ -2,6 +2,8 @@ using Microsoft.EntityFrameworkCore;
 using MotorcycleService.Infrastructure.DataContext;
 using MotorcycleService;
 using Serilog;
+using MotorcycleService.Application.Interfaces;
+using Refit;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +20,8 @@ Log.Logger = new LoggerConfiguration()
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
         options.UseNpgsql(builder.Configuration.GetConnectionString("Postegres")));
+builder.Services.AddRefitClient<IRentalService>()
+    .ConfigureHttpClient(c => c.BaseAddress = new Uri("https://localhost:5001"));
 
 builder.Services.AddApplicationServices(builder.Configuration);
 builder.Host.UseSerilog();
@@ -46,6 +50,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+app.UseCors("AllowAll");
 
 app.UseAuthorization();
 

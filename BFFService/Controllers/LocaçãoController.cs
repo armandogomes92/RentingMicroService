@@ -11,7 +11,6 @@ namespace BFFService.Controllers
     public class LocaçãoController : ControllerBase
     {
         private readonly IRentalService _rentalService;
-        private readonly IRentalService _rest = RestService.For<IRentalService>("https://localhost:5001");
 
         public LocaçãoController(IRentalService rentalService)
         {
@@ -24,7 +23,7 @@ namespace BFFService.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] Locacao locacao)
         {
-            return Ok(await _rest.Post(locacao));
+            return Ok(await _rentalService.Post(locacao));
         }
 
         /// <summary>
@@ -33,7 +32,7 @@ namespace BFFService.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
-            return Ok(await _rest.Get(id));
+            return Ok(await _rentalService.Get(id));
         }
 
         /// <summary>
@@ -42,7 +41,7 @@ namespace BFFService.Controllers
         [HttpPut("{id}/devolucao")]
         public async Task<IActionResult> Put(string id, [FromBody] DateTime dataDevolucao)
         {
-            return Ok(await _rest.Put(id, dataDevolucao));
+            return Ok(await _rentalService.Put(id, dataDevolucao));
         }
     }
 }

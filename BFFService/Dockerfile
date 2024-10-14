@@ -1,6 +1,7 @@
 # Use a imagem base do SDK do .NET 8 para construir o projeto
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
+ENV ASPNETCORE_ENVIRONMENT=Development
 
 # Copie o arquivo de solução e os arquivos de projeto
 COPY *.sln ./

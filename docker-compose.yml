@@ -9,16 +9,9 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
-      - postgres_initdb:/docker-entrypoint-initdb.d
+      - ./scripts.sql:/docker-entrypoint-initdb.d/scripts.sql
+      - postgres-data:/var/lib/postgresql/data 
     restart: always
-
-  initdb:
-    build:
-      context: .
-      dockerfile: Dockerfile.initdb
-    volumes:
-      - postgres_initdb:/docker-entrypoint-initdb.d
 
   mongodb:
     image: mongo:latest
@@ -84,12 +77,14 @@ services:
       context: ./BFFService
       dockerfile: Dockerfile
     container_name: bff
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
     depends_on:
       - motorcycle
       - rental
       - deliveryman
     ports:
-      - "5004:80"
+      - "5004:8080"
     restart: always
 
   notification:
@@ -101,11 +96,11 @@ services:
       - motorcycle
       - rental
       - deliveryman
+      - rabbitmq
     ports:
       - "5005:80"
     restart: always
 
 volumes:
-  postgres_data:
-  mongo_data:
-  postgres_initdb:
+ postgres-data:
+ mongo_data:

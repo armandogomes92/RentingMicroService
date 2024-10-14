@@ -2,6 +2,8 @@ using RentalMotorcycle;
 using Microsoft.EntityFrameworkCore;
 using RentalMotorcycle.Infrastructure.DataContext;
 using Serilog;
+using RentalMotorcycle.Application.Interfaces;
+using Refit;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +15,9 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddApplicationServices(builder.Configuration);
 builder.Services.AddHttpClient();
+builder.Services.AddRefitClient<IDeliveryManService>()
+    .ConfigureHttpClient(c => c.BaseAddress = new Uri("https://localhost:5003"));
+
 
 Log.Logger = new LoggerConfiguration()
        .WriteTo.File("logs/log-.txt", rollingInterval: RollingInterval.Day)

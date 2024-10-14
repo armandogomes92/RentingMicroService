@@ -11,7 +11,6 @@ namespace BFFService.Controllers
     public class MotosController : ControllerBase
     {
         private readonly IMotorcycleService _motorcycleService;
-        private readonly IMotorcycleService _rest = RestService.For<IMotorcycleService>("https://localhost:5002");
 
         public MotosController(IMotorcycleService motorcycleService)
         {
@@ -24,7 +23,7 @@ namespace BFFService.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] Moto moto)
         {
-            return Ok(await _rest.Post(moto));
+            return Ok(await _motorcycleService.Post(moto));
         }
 
         /// <summary>
@@ -33,7 +32,7 @@ namespace BFFService.Controllers
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            return Ok(await _rest.GetMotos());
+            return Ok(await _motorcycleService.GetMotos());
         }
 
         /// <summary>
@@ -42,7 +41,7 @@ namespace BFFService.Controllers
         [HttpPut("{id}/placa")]
         public async Task<IActionResult> Put(string id, [FromBody] string placa)
         {
-            return Ok(await _rest.Put(id, placa));
+            return Ok(await _motorcycleService.Put(id, placa));
         }
 
         /// <summary>
@@ -51,7 +50,7 @@ namespace BFFService.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(string id)
         {
-            return Ok(await _rest.GetById(id));
+            return Ok(await _motorcycleService.GetById(id));
         }
 
         /// <summary>
@@ -60,7 +59,7 @@ namespace BFFService.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(string id)
         {
-            return Ok(await _rest.Delete(id));
+            return Ok(await _motorcycleService.Delete(id));
         }
     }
 }

@@ -19,6 +19,17 @@ builder.Services.AddHostedService<ConsumerTotalPrice>();
 builder.Services.AddSingleton(builder.Configuration.GetSection("MongoDBConfiguration").Get<MongoConfig>()!);
 builder.Services.AddSingleton<MongoService>();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAllOrigins",
+        builder =>
+        {
+            builder.AllowAnyOrigin()
+                   .AllowAnyHeader()
+                   .AllowAnyMethod();
+        });
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -27,8 +38,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
-
+app.UseCors("AllowAll");
 
 app.UseHttpsRedirection();
 
