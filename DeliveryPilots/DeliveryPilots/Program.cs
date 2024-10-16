@@ -5,6 +5,11 @@ using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.WebHost.ConfigureKestrel(options =>
+{
+    options.ListenAnyIP(5003);
+});
+
 // Add services to the container.
 
 builder.Services.AddControllers();

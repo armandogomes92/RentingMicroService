@@ -1,10 +1,9 @@
-﻿using RentalMotorcycle.Application.Handlers.CommonResources;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
-namespace RentalMotorcycle.Application.Handlers.Rental.Commands.Create;
+namespace BFFService.Models;
 
-public class CreateRentalRegistryCommand : Command
+public class CreateRentalRegistryCommand
 {
     [Required, JsonPropertyName("entregador_id")]
     public string EntregadorId { get; set; }

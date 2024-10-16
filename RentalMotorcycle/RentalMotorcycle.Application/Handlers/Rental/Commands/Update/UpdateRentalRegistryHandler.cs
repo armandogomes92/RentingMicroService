@@ -23,7 +23,7 @@ public class UpdateRentalRegistryHandler : CommandHandler<UpdateRentalRegistryCo
     {
         _logger.LogInformation(LogMessages.Start($"{NameOfClass}"));
 
-        var result = await _deliveryManService.GetRentalById(command.Identificador);
+        var result = await _deliveryManService.EndRentalAsync(command);
         if (result == null)
         {
             _logger.LogInformation(LogMessages.Finished(NameOfClass));

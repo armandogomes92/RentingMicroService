@@ -24,8 +24,14 @@ public class UpdateMotorcyclePlateHandler : CommandHandler<UpdateMotorcycleComma
 
         var result = await _motorcycleService.UpdateMotorcycleByIdAsync(command, cancellationToken);
 
+        if (!result)
+        {
+            _logger.LogWarning(LogMessages.Finished(Name));
+            return new Response {Content = result,  Messagem = Messages.IvalidData };
+        }
+
         _logger.LogInformation(LogMessages.Finished(Name));
 
-        return new Response { Messagem = Messages.UpdatePlate };
+        return new Response { Content = result, Messagem = "Placa modificada com sucesso" };
     }
 }

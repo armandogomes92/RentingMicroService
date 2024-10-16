@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace MotorcycleService.Domain.Models;
+namespace RentalMotorcycle.Domain.Models;
 
 public class Motorcycle
 {

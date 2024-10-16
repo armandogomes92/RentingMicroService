@@ -13,6 +13,7 @@ public class ApplicationDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<Motorcycle>().ToTable("motorcycles");
         modelBuilder.ApplyConfiguration(new MotorcycleMap());
 
         base.OnModelCreating(modelBuilder);

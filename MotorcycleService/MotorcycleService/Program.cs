@@ -7,6 +7,11 @@ using Refit;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.WebHost.ConfigureKestrel(options =>
+{
+    options.ListenAnyIP(5001);
+});
+
 // Add services to the container.
 
 builder.Services.AddControllers();
@@ -21,7 +26,7 @@ Log.Logger = new LoggerConfiguration()
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
         options.UseNpgsql(builder.Configuration.GetConnectionString("Postegres")));
 builder.Services.AddRefitClient<IRentalService>()
-    .ConfigureHttpClient(c => c.BaseAddress = new Uri("https://localhost:5001"));
+    .ConfigureHttpClient(c => c.BaseAddress = new Uri("http://host.docker.internal:5002"));
 
 builder.Services.AddApplicationServices(builder.Configuration);
 builder.Host.UseSerilog();
@@ -33,7 +38,7 @@ builder.Services.AddLogging(config =>
 });
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAllOrigins",
+    options.AddPolicy("AllowedHosts",
         builder =>
         {
             builder.AllowAnyOrigin()

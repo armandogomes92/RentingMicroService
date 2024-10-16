@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Options;
 using NotificationService.Infrastructure.Messaging;
 using NotificationService.Infrastructure.MongoDB;
 using NotificationService.Service.Consumers;
@@ -10,18 +11,37 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddSingleton(builder.Configuration.GetSection("RabbitMQConfiguration").Get<RabbitMQConfiguration>()!);
+builder.Services.Configure<RabbitMQConfiguration>(builder.Configuration.GetSection("RabbitMQ"));
+builder.Services.AddSingleton(sp =>
+            sp.GetRequiredService<IOptions<RabbitMQConfiguration>>().Value);
 builder.Services.AddSingleton<RabbitMQClient>();
-builder.Services.AddSingleton<IModel>(sp => sp.GetRequiredService<RabbitMQClient>().CreateModel());
+
+// Adiciona o serviço IConnection e IModel
+builder.Services.AddSingleton<IConnection>(sp =>
+{
+    var factory = new ConnectionFactory
+    {
+        HostName = sp.GetRequiredService<IOptions<RabbitMQConfiguration>>().Value.Host
+    };
+    return factory.CreateConnection();
+});
+
+builder.Services.AddSingleton<IModel>(sp =>
+{
+    var connection = sp.GetRequiredService<IConnection>();
+    return connection.CreateModel();
+});
 
 builder.Services.AddHostedService<ConsumerTotalPrice>();
+builder.Services.AddHostedService<ConsumerMotorcycle2024>();
+builder.Services.AddHostedService<ConsumerRegisteredMotorcycle>();
 
 builder.Services.AddSingleton(builder.Configuration.GetSection("MongoDBConfiguration").Get<MongoConfig>()!);
 builder.Services.AddSingleton<MongoService>();
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAllOrigins",
+    options.AddPolicy("AllowedHosts",
         builder =>
         {
             builder.AllowAnyOrigin()
@@ -38,7 +58,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-app.UseCors("AllowAll");
+app.UseCors("AllowedHosts");
 
 app.UseHttpsRedirection();
 

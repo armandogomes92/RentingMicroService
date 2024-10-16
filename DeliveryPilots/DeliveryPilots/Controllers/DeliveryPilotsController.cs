@@ -16,7 +16,7 @@ public class DeliveryPilotsController : ControllerBase
         _mediator = mediator;
     }
 
-    [HttpPost("/{id}/cnh")]
+    [HttpPost()]
     [ProducesResponseType(typeof(Response), 201)]
     [ProducesResponseType(typeof(Response), 400)]
     public async Task<IActionResult> Create([FromBody] CreateDeliveryManCommand command)
@@ -31,12 +31,16 @@ public class DeliveryPilotsController : ControllerBase
         return Created();
     }
 
-    [HttpPost()]
+    [HttpPost("{id}/cnh")]
     [ProducesResponseType(typeof(Response), 201)]
     [ProducesResponseType(typeof(Response), 400)]
-    public async Task<IActionResult> Update(string id, [FromBody] UpdateDeliveryManCommand command)
+    public async Task<IActionResult> Update(string id, [FromBody] byte[] imagemCnh)
     {
-        command.Identificador = id;
+        UpdateDeliveryManCommand command = new UpdateDeliveryManCommand
+        {
+            Identificador = id,
+            ImagemCnh = imagemCnh
+        };
         var response = await _mediator.Send(command);
 
         if (!String.IsNullOrEmpty(response.Messagem))
@@ -47,18 +51,18 @@ public class DeliveryPilotsController : ControllerBase
         return Created();
     }
 
-    [HttpGet("cnh-tipo")]
+    [HttpGet("{id}/cnh-tipo")]
     [ProducesResponseType(typeof(Response), 200)]
-    [ProducesResponseType(typeof(Response), 400)]
-    public async Task<IActionResult> GetCnh([FromBody] GetCategoryOfDeliveryManQuery query)
+    [ProducesResponseType(typeof(Response), 404)]
+    public async Task<IActionResult> GetCnh(string id)
     {
-        var response = await _mediator.Send(query);
+        var response = await _mediator.Send(new GetCategoryOfDeliveryManQuery { Identificador = id });
 
         if (!String.IsNullOrEmpty(response.Messagem))
         {
             return BadRequest(response);
         }
 
-        return Ok(response);
+        return Ok(response.Content);
     }
 }

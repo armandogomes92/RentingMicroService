@@ -18,16 +18,18 @@ public class RentalService : IRentalService
     private readonly IRabbitMqService _rabbitMqService;
     private readonly HttpClient _httpClient;
     private readonly string _baseUrl;
+    private readonly IDeliveryManService _deliveryManService;
 
     private const string NameOfClass = nameof(RentalService);
 
-    public RentalService(ILogger<RentalService> logger, IRentalRepository deliveryManRepository, HttpClient httpClient, IConfiguration configuration, IRabbitMqService rabbitMqService)
+    public RentalService(ILogger<RentalService> logger, IRentalRepository deliveryManRepository, HttpClient httpClient, IConfiguration configuration, IRabbitMqService rabbitMqService, IDeliveryManService deliveryManService)
     {
         _logger = logger;
         _rentalRepository = deliveryManRepository;
         _httpClient = httpClient;
         _baseUrl = configuration["ExternalApi:BaseUrl"]!;
         _rabbitMqService = rabbitMqService;
+        _deliveryManService = deliveryManService;
     }
 
     public async Task<bool> CreateRentalRegistry(CreateRentalRegistryCommand command)
@@ -49,7 +51,8 @@ public class RentalService : IRentalService
             DataInicio = command.DataInicio,
             DataTermino = command.DataTermino,
             DataPrevisaoTermino = command.DataPrevisaoTermino,
-            Plano = command.Plano
+            Plano = command.Plano,
+            Rented = true
         };
 
         bool resultSaveData = await _rentalRepository.AddRentalRegistryAsync(rental);
@@ -89,22 +92,17 @@ public class RentalService : IRentalService
         _logger.LogInformation(LogMessages.Start(nameForLog));
 
         var rental = await GetRentalById(command.Identificador);
+        rental.DataDevolucao = command.DataDevolucao;
+        rental.ValorTotal = _rentalRepository.CalculateTotalRentingCost(rental);
+        rental.Rented = false;
 
-        var rentalToFinish = await _rentalRepository.EndRentalAsync(rental);
-
-        if (rentalToFinish)
-        {
-            _logger.LogError(LogMessages.Finished(nameForLog));
-            return false;
-        }
-
-        rental.ValorTotal = _rentalRepository.CalculateTotalRentingCost(rental, command.DataDevolucao);
-        
         var messege = new {Id = rental.EntregadorId, ValorTotal = rental.ValorTotal };
         _rabbitMqService.PublishTotalPriceOfRental(messege);
 
+        var result = await _rentalRepository.EndRentalAsync(rental);
+
         _logger.LogInformation(LogMessages.Finished(nameForLog));
-        return true;
+        return result;
     }
 
     private async Task<bool> CheckDeliveryManCnh(string deliveryManId)
@@ -113,8 +111,8 @@ public class RentalService : IRentalService
 
         _logger.LogInformation(LogMessages.Start(nameForLog));
 
-        var rest = RestService.For<IDeliveryManService>("https://localhost:5001");
+        var cnhType = await _deliveryManService.GetCnhType(deliveryManId);
 
-        return await rest.GetCnhType(deliveryManId);
+        return cnhType.ToUpper() == "A" || cnhType.ToUpper() == "AB" ? true : false;
     }
 }

@@ -1,5 +1,6 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
+ENV ASPNETCORE_ENVIRONMENT=Development
 
 # Copie os arquivos .csproj e restaure as dependências
 COPY ["MotorcycleService/MotorcycleService.csproj", "MotorcycleService/"]
@@ -10,15 +11,13 @@ COPY ["MotorcycleService.Tests/MotorcycleService.Tests.csproj", "MotorcycleServi
 
 RUN dotnet restore "MotorcycleService/MotorcycleService.csproj"
 
-# Copie o restante dos arquivos e compile o projeto
 COPY . .
 WORKDIR "/src/MotorcycleService"
-RUN dotnet build "MotorcycleService.csproj" -c Release -o /app/build
+RUN dotnet build "MotorcycleService.csproj" -c Development -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "MotorcycleService.csproj" -c Release -o /app/publish
+RUN dotnet publish "MotorcycleService.csproj" -c Development -o /app/publish
 
-# Use a imagem base do .NET runtime
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
 WORKDIR /app
 COPY --from=publish /app/publish .

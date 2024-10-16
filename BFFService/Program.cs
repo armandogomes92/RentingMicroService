@@ -1,4 +1,5 @@
 using BFFService.Services;
+using Newtonsoft.Json;
 using Refit;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,11 +10,13 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddRefitClient<IMotorcycleService>()
-    .ConfigureHttpClient(c => c.BaseAddress = new Uri("https://localhost:5002"));
-builder.Services.AddRefitClient<IDeliveryManService>()
-    .ConfigureHttpClient(c => c.BaseAddress = new Uri("https://localhost:5003"));
+    .ConfigureHttpClient(c => c.BaseAddress = new Uri("http://host.docker.internal:5001"));
+
 builder.Services.AddRefitClient<IRentalService>()
-    .ConfigureHttpClient(c => c.BaseAddress = new Uri("https://localhost:5001"));
+    .ConfigureHttpClient(c => c.BaseAddress = new Uri("http://host.docker.internal:5002"));
+
+builder.Services.AddRefitClient<IDeliveryManService>()
+    .ConfigureHttpClient(c => c.BaseAddress = new Uri("http://host.docker.internal:5003"));
 
 builder.Services.AddSwaggerGen();
 builder.Services.AddSwaggerGen(c =>
@@ -46,7 +49,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseCors("AllowAll");
-app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
 app.Run();

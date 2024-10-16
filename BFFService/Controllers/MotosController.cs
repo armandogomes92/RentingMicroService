@@ -1,7 +1,7 @@
 using BFFService.Models;
 using BFFService.Services;
 using Microsoft.AspNetCore.Mvc;
-using Refit;
+using System.Text.Json;
 
 namespace BFFService.Controllers
 {
@@ -23,25 +23,44 @@ namespace BFFService.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] Moto moto)
         {
-            return Ok(await _motorcycleService.Post(moto));
+            var response = await _motorcycleService.Post(moto);
+            if (response.IsSuccessStatusCode)
+            {
+                var motos = await response.Content.ReadAsStreamAsync();
+                return Ok(motos);
+            }
+            return StatusCode((int)response.StatusCode, response.ReasonPhrase);
         }
 
         /// <summary>
         /// Obtém todas as motos.
         /// </summary>
         [HttpGet]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> Get([FromQuery] string? placa)
         {
-            return Ok(await _motorcycleService.GetMotos());
+            var response = await _motorcycleService.GetMotos(placa);
+            if (response.IsSuccessStatusCode)
+            {
+                var motos = await response.Content.ReadAsStreamAsync();
+                return Ok(motos);
+            }
+            return StatusCode((int)response.StatusCode, response.ReasonPhrase);
         }
 
         /// <summary>
         /// Atualiza a placa de uma moto.
         /// </summary>
         [HttpPut("{id}/placa")]
-        public async Task<IActionResult> Put(string id, [FromBody] string placa)
+        public async Task<IActionResult> Put(string id, [FromBody] UpdateMotorcycleCommand command)
         {
-            return Ok(await _motorcycleService.Put(id, placa));
+            var response = await _motorcycleService.Put(id, command);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                return BadRequest();
+            }
+            var content = await response.Content.ReadAsStreamAsync();
+            return Ok(content);
         }
 
         /// <summary>
@@ -50,7 +69,15 @@ namespace BFFService.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(string id)
         {
-            return Ok(await _motorcycleService.GetById(id));
+            var response = await _motorcycleService.GetById(id);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                return BadRequest();
+            }
+            var content = await response.Content.ReadAsStreamAsync();
+
+            return Ok(content);
         }
 
         /// <summary>
@@ -59,7 +86,14 @@ namespace BFFService.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(string id)
         {
-            return Ok(await _motorcycleService.Delete(id));
+            var response = await _motorcycleService.Delete(id);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                return BadRequest();
+            }
+            var content = await response.Content.ReadAsStreamAsync();
+            return Ok(content);
         }
     }
 }

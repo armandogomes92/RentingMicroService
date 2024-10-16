@@ -31,7 +31,7 @@ public class DeleteMotorcycleByIdHandler : CommandHandler<DeleteMotorcycleByIdCo
         {
             _logger.LogInformation(LogMessages.Finished(Name));
 
-            response.Messagem = "Erro ao deletar moto.";
+            response.Messagem = Messages.IvalidData;
 
             return response;
         }

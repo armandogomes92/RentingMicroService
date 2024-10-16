@@ -16,15 +16,17 @@ public class MotorcycleService : IMotorcycleService
     private readonly IMotorcycleRepository _motoRepository;
     private readonly IRabbitMqService _rabbitMqService;
     private readonly ILogger<UpdateMotorcyclePlateHandler> _logger;
+    private readonly IRentalService _rentalService;
 
     private const string NameOfClass = nameof(MotorcycleService);
     private const int MotorcycleYearForNotification = 2024;
 
-    public MotorcycleService(IMotorcycleRepository motoRepository, IRabbitMqService rabbitMqService, ILogger<UpdateMotorcyclePlateHandler> logger)
+    public MotorcycleService(IMotorcycleRepository motoRepository, IRabbitMqService rabbitMqService, ILogger<UpdateMotorcyclePlateHandler> logger, IRentalService rentalService)
     {
         _motoRepository = motoRepository;
         _rabbitMqService = rabbitMqService;
         _logger = logger;
+        _rentalService = rentalService;
     }
 
     public async Task<bool> CreateMotorcycleAsync(CreateMotorcycleCommand command, CancellationToken cancellationToken)
@@ -58,13 +60,13 @@ public class MotorcycleService : IMotorcycleService
 
         return result;
     }
-    public async Task<IEnumerable<Motorcycle>> GetMotorcyclesAsync()
+    public async Task<IEnumerable<Motorcycle>> GetMotorcyclesAsync(GetMotorcyclesQuery query)
     {
         string nameForLog = $"{NameOfClass} {nameof(GetMotorcyclesAsync)}";
 
         _logger.LogInformation(LogMessages.Start(nameForLog));
 
-        var result = await _motoRepository.GetAllMotorcyclesAsync();
+        var result = await _motoRepository.GetAllMotorcyclesAsync(query.Placa);
 
         _logger.LogInformation(LogMessages.Finished(nameForLog));
 
@@ -125,8 +127,14 @@ public class MotorcycleService : IMotorcycleService
     }
     private async Task<bool> CheckMotorcycleRental(string identificador)
     {
-        var rest = RestService.For<IRentalService>("https://localhost:5001");
+        try
+        {
+            return await _rentalService.CheckMotorcycleIsRenting(identificador);
+        }
+        catch (Exception ex)
+        {
 
-        return await rest.CheckMotorcycleIsRenting(identificador);
+            throw ex;
+        }
     }
 }

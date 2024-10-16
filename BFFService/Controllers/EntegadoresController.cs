@@ -1,7 +1,6 @@
 ﻿using BFFService.Models;
 using BFFService.Services;
 using Microsoft.AspNetCore.Mvc;
-using Refit;
 
 namespace BFFService.Controllers
 {
@@ -23,9 +22,14 @@ namespace BFFService.Controllers
         /// <param name="entregador"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] Entregadores entregador)
+        public async Task<IActionResult> Post([FromBody] CreateDeliveryManCommand entregador)
         {
-            return Ok(await _deliveryMan.PostEntregadores(entregador));
+            var response = await _deliveryMan.PostEntregadores(entregador);
+            if (response.IsSuccessStatusCode)
+            {
+                return Created();
+            }
+            return StatusCode((int)response.StatusCode, response.ReasonPhrase);
         }
 
         /// <summary>
@@ -34,7 +38,12 @@ namespace BFFService.Controllers
         [HttpPost("{id}/cnh")]
         public async Task<IActionResult> PostCnh(string id, [FromBody] byte[] imagemCnh)
         {
-            return Ok(await _deliveryMan.PostCnh(id, imagemCnh));
+            var response = await _deliveryMan.PostCnh(id, imagemCnh);
+            if (response.IsSuccessStatusCode)
+            {
+                return Created();
+            }
+            return StatusCode((int)response.StatusCode, response.ReasonPhrase);
         }
     }
 }

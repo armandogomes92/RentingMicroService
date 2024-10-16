@@ -4,5 +4,6 @@ namespace MotorcycleService.Application.Handlers.Motorcycle.Queries
 {
     public class GetMotorcyclesQuery : Query
     {
+        public string? Placa { get; set; }
     }
 }

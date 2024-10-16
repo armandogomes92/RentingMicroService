@@ -30,6 +30,6 @@ public class UpdateDeliveryManHandler : CommandHandler<UpdateDeliveryManCommand>
             return new Response { Messagem = Messages.InvalidData };
         }
         _logger.LogError(LogMessages.Finished(NameOfClass));
-        return new Response { Messagem = Messages.InvalidData };
+        return new Response { Content = result };
     }
 }

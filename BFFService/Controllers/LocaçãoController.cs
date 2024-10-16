@@ -1,7 +1,7 @@
 ﻿using BFFService.Models;
 using BFFService.Services;
 using Microsoft.AspNetCore.Mvc;
-using Refit;
+using System.Text.Json;
 
 namespace BFFService.Controllers
 {
@@ -21,9 +21,16 @@ namespace BFFService.Controllers
         /// Adiciona uma nova locação.
         /// </summary>
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] Locacao locacao)
+        public async Task<IActionResult> Post([FromBody] CreateRentalRegistryCommand command)
         {
-            return Ok(await _rentalService.Post(locacao));
+
+            var response = await _rentalService.Post(command);
+            if (response.IsSuccessStatusCode)
+            {
+                var rent = await response.Content.ReadAsStreamAsync();
+                return Created();
+            }
+            return StatusCode((int)response.StatusCode, response);
         }
 
         /// <summary>
@@ -32,16 +39,30 @@ namespace BFFService.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
-            return Ok(await _rentalService.Get(id));
+
+            var response = await _rentalService.Get(id);
+            if (response.IsSuccessStatusCode)
+            {
+                var rent = await response.Content.ReadAsStreamAsync();
+                return Ok(rent);
+            }
+            return StatusCode((int)response.StatusCode, response.ReasonPhrase);
         }
 
         /// <summary>
         /// Atualiza a data de devolução de uma locação.
         /// </summary>
         [HttpPut("{id}/devolucao")]
-        public async Task<IActionResult> Put(string id, [FromBody] DateTime dataDevolucao)
+        public async Task<IActionResult> Put(string id, [FromBody] Locacao locacao)
         {
-            return Ok(await _rentalService.Put(id, dataDevolucao));
+
+            var response = await _rentalService.Put(id, locacao);
+            if (response.IsSuccessStatusCode)
+            {
+                var rent = await response.Content.ReadAsStreamAsync();
+                return Ok();
+            }
+            return StatusCode((int)response.StatusCode, response.ReasonPhrase);
         }
     }
 }

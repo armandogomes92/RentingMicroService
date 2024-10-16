@@ -6,7 +6,7 @@ public interface IRentalRepository
 {
     Task<bool> AddRentalRegistryAsync(Rental rental);
     Task<Rental> GetRentalByIdAsync(int identificador);
-    Task<bool> EndRentalAsync(Rental rental);
+    Task<bool> EndRentalAsync(Domain.Models.Rental rental);
     Task<bool> CheckMotorcycleAvailability(string motorcycleId);
-    decimal CalculateTotalRentingCost(Rental rental, DateTime dataDevolucao);
+    decimal CalculateTotalRentingCost(Rental rental);
 }

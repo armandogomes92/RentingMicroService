@@ -8,7 +8,7 @@ using RentalMotorcycle.Application.Handlers.Rental.Queries;
 namespace RentalMotorcycle.Controllers
 {
     [ApiController]
-    [Route("aluguel")]
+    [Route("locacao")]
     public class RentalController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -37,7 +37,8 @@ namespace RentalMotorcycle.Controllers
         public async Task<IActionResult> Get(int id)
         {
             var query = new GetRentalRegistryByIdQuery { Identificador = id};
-            return Ok(await _mediator.Send(query));
+            var result = await _mediator.Send(query);
+            return Ok(result.Content);
         }
 
         [HttpPut("{id}/devolucao")]
@@ -55,10 +56,12 @@ namespace RentalMotorcycle.Controllers
             return Ok(response);
         }
 
-        [HttpGet("validar-locacao")]
-        public async Task<IActionResult> GetRental([FromBody] CheckMotorcycleIsRentingQuery query)
+        [HttpGet("validar-locacao/{id}")]
+        [ProducesResponseType(typeof(Response), 200)]
+        public async Task<IActionResult> GetRental( string id)
         {
-            return Ok(await _mediator.Send(query));
+            var result = await _mediator.Send(new CheckMotorcycleIsRentingQuery { Identificador = id });
+            return Ok(result.Content);
         }
     }
 }

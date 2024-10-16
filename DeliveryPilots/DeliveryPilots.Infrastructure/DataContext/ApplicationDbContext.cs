@@ -12,7 +12,7 @@ public class ApplicationDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-
+        modelBuilder.Entity<DeliveryMan>().ToTable("deliverymen");
         base.OnModelCreating(modelBuilder);
     }
 }

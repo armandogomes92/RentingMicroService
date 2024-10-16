@@ -35,7 +35,7 @@ public class ConsumerRegisteredMotorcycle : BackgroundService
 
             _channel.BasicAck(eventArgs.DeliveryTag, false);
         };
-        _channel.BasicConsume(_config.QueueYear2024, false, consumer);
+        _channel.BasicConsume(_config.QueueRegistered, false, consumer);
 
         return Task.CompletedTask;
     }

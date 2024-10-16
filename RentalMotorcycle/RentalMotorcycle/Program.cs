@@ -7,17 +7,19 @@ using Refit;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+builder.WebHost.ConfigureKestrel(options =>
+{
+    options.ListenAnyIP(5002);
+});
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddApplicationServices(builder.Configuration);
 builder.Services.AddHttpClient();
 builder.Services.AddRefitClient<IDeliveryManService>()
-    .ConfigureHttpClient(c => c.BaseAddress = new Uri("https://localhost:5003"));
-
+    .ConfigureHttpClient(c => c.BaseAddress = new Uri("http://host.docker.internal:5003"));
 
 Log.Logger = new LoggerConfiguration()
        .WriteTo.File("logs/log-.txt", rollingInterval: RollingInterval.Day)
@@ -25,6 +27,17 @@ Log.Logger = new LoggerConfiguration()
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
         options.UseNpgsql(builder.Configuration.GetConnectionString("Postegres")));
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowedHosts",
+        builder =>
+        {
+            builder.AllowAnyOrigin()
+                   .AllowAnyHeader()
+                   .AllowAnyMethod();
+        });
+});
 
 var app = builder.Build();
 
@@ -35,9 +48,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
-
-app.UseAuthorization();
+app.UseCors("AllowAll");
 
 app.MapControllers();
 

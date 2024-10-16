@@ -7,11 +7,6 @@ public class UpdateMotorcycleCommandValidator : AbstractValidator<UpdateMotorcyc
 {
     public UpdateMotorcycleCommandValidator()
     {
-        RuleFor(query => query.Identificador)
-            .NotEmpty()
-            .NotNull()
-            .WithMessage(Messages.IvalidData);
-
         RuleFor(query => query.Placa)
         .NotEmpty()
         .NotNull()

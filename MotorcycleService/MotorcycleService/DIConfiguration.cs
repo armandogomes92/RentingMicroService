@@ -18,9 +18,12 @@ public static class DIConfiguration
     {
         // Configuração do RabbitMQ
         services.Configure<RabbitMQConfiguration>(configuration.GetSection("RabbitMQ"));
+
         services.AddSingleton(sp =>
             sp.GetRequiredService<IOptions<RabbitMQConfiguration>>().Value);
+
         services.AddSingleton<RabbitMQClient>();
+
         services.AddSingleton<IRabbitMqService, RabbitMqService>();
 
         // Repositórios

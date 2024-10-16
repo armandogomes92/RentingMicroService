@@ -3,13 +3,15 @@ CREATE TABLE motorcycles (
     ano INT NOT NULL,
     modelo VARCHAR(255) NOT NULL,
     placa VARCHAR(255) NOT NULL
-);
+); 
 
 CREATE TABLE deliverymen (
     identificador VARCHAR(255) PRIMARY KEY,
     nome VARCHAR(255) NOT NULL,
-    cpf VARCHAR(11) NOT NULL,
-    telefone VARCHAR(15) NOT NULL
+    cnpj VARCHAR(11) NOT NULL,
+    data_nascimento TIMESTAMP NOT NULL,
+    numero_cnh VARCHAR(255) NOT NULL,
+    tipo_cnh VARCHAR(2) NOT NULL
 );
 
 CREATE TABLE rentals (
@@ -31,7 +33,6 @@ CREATE TABLE rentals (
         FOREIGN KEY(moto_id) 
         REFERENCES motorcycles(identificador)
 );
-
 -- Inserir 3 motos
 INSERT INTO motorcycles (identificador, ano, modelo, placa) VALUES
 ('moto1', 2020, 'Modelo A', 'ABC1234'),
@@ -39,10 +40,10 @@ INSERT INTO motorcycles (identificador, ano, modelo, placa) VALUES
 ('moto3', 2022, 'Modelo C', 'GHI9012');
 
 -- Inserir 2 entregadores
-INSERT INTO deliverymen (identificador, nome, cpf, telefone) VALUES
-('entregador1', 'João Silva', '12345678901', '11987654321'),
-('entregador2', 'Maria Souza', '98765432100', '11912345678');
+INSERT INTO deliverymen (identificador, nome, cnpj, data_nascimento, numero_cnh, tipo_cnh) VALUES
+('entregador1', 'João Silva', '12345678901', '1994-10-13 08:00:00', '12345678900', 'A'),
+('entregador2', 'Maria Souza', '98765432100', '1984-10-13 08:00:00', '12345678900', 'AB');
 
 -- Inserir 1 locação
 INSERT INTO rentals (entregador_id, moto_id, data_inicio, data_termino, data_previsao_termino, plano, rented, valor_diaria, valor_total) VALUES
-('entregador1', 'moto1', '2024-10-12 08:00:00', '2024-10-13 08:00:00', '2024-10-13 08:00:00', 1, TRUE, 100.0, 100.0);
+('entregador1', 'moto1', '2024-10-12 08:00:00', '2024-10-13 08:00:00', '2024-10-13 08:00:00', 7, TRUE, 100.0, 100.0);

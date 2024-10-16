@@ -41,7 +41,7 @@ public class DeliveryManService : IDeliveryManService
 
         if (resultSaveData)
         {
-            bool result = await SaveImageToLocalDiskAsync(command.ImagemCnh, command.Identificador);
+            bool result = await _deliveryManRepository.InsertOrUpdateImageCnhAsync(command.ImagemCnh, command.Identificador);
             _logger.LogInformation(LogMessages.Finished(nameForLog));
             return result;
         }
@@ -72,32 +72,5 @@ public class DeliveryManService : IDeliveryManService
 
         _logger.LogInformation(LogMessages.Finished(nameForLog));
         return result;
-    }
-
-    public async Task<bool> SaveImageToLocalDiskAsync(byte[] image, string identificador)
-    {
-        var nameForLog = $"{NameOfClass} {nameof(SaveImageToLocalDiskAsync)}";
-
-        _logger.LogInformation(LogMessages.Start(nameForLog));
-
-        try
-        {
-            var directoryPath = Path.Combine("CnhImages", identificador);
-            if (!Directory.Exists(directoryPath))
-            {
-                Directory.CreateDirectory(directoryPath);
-            }
-
-            var filePath = Path.Combine(directoryPath, "cnh.jpg");
-            await File.WriteAllBytesAsync(filePath, image);
-
-            _logger.LogInformation(LogMessages.Finished(nameForLog));
-            return true;
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, LogMessages.Finished(nameForLog));
-            return false;
-        }
     }
 }

@@ -2,15 +2,12 @@
 
 # Esta fase é usada durante a execução no VS no modo rápido (Padrão para a configuração de Depuração)
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
-USER app
 WORKDIR /app
-EXPOSE 8080
-EXPOSE 8081
+ENV ASPNETCORE_ENVIRONMENT=Development
 
 
 # Esta fase é usada para compilar o projeto de serviço
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["NotificationService/NotificationService.csproj", "NotificationService/"]
 COPY ["NotificationService.Domain/NotificationService.Domain.csproj", "NotificationService.Domain/"]
@@ -21,12 +18,11 @@ RUN dotnet restore "NotificationService/NotificationService.csproj"
 
 COPY . .
 WORKDIR "/src/NotificationService"
-RUN dotnet build "./NotificationService.csproj" -c $BUILD_CONFIGURATION -o /app/build
+RUN dotnet build "./NotificationService.csproj" -c Development -o /app/build
 
 # Esta fase é usada para publicar o projeto de serviço a ser copiado para a fase final
 FROM build AS publish
-ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./NotificationService.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "./NotificationService.csproj" -c Development -o /app/publish /p:UseAppHost=false
 
 # Esta fase é usada na produção ou quando executada no VS no modo normal (padrão quando não está usando a configuração de Depuração)
 FROM base AS final

@@ -38,7 +38,7 @@ public class ConsumerTotalPrice : BackgroundService
 
             _channel.BasicAck(eventArgs.DeliveryTag, false);
         };
-        _channel.BasicConsume(_config.QueueYear2024, false, consumer);
+        _channel.BasicConsume(_config.QueueTotalPrice, false, consumer);
 
         return Task.CompletedTask;
     }

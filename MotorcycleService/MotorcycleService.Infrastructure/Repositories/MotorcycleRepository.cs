@@ -31,15 +31,18 @@ public class MotorcycleRepository : IMotorcycleRepository
         return await _context.SaveChangesAsync() > 0;
     }
 
-    public async Task<List<Motorcycle>> GetAllMotorcyclesAsync()
+    public async Task<List<Motorcycle>> GetAllMotorcyclesAsync(string? placa)
     {
         _logger.LogInformation(LogMessages.Start($"{NameOfClass} {nameof(GetAllMotorcyclesAsync)}"));
 
-        var result = await _context.Motorcycle.ToListAsync();
+        var result = _context.Motorcycle.AsNoTracking();
+
+        if (!String.IsNullOrEmpty(placa)) 
+            result.AsNoTracking().Where(x => x.Placa == placa);
 
         _logger.LogInformation(LogMessages.Finished($"{NameOfClass} {nameof(GetAllMotorcyclesAsync)}"));
 
-        return result;
+        return result.ToList();
     }
 
     public async Task<bool> UpdateMotorcycleByIdAsync(Motorcycle moto)

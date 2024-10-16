@@ -9,10 +9,10 @@ public interface IMotorcycleService
     Task<HttpResponseMessage> Post([Body] Moto moto);
 
     [Get("/motos")]
-    Task<HttpResponseMessage> GetMotos();
+    Task<HttpResponseMessage> GetMotos([Query]string? placa);
 
     [Put("/motos/{id}/placa")]
-    Task<HttpResponseMessage> Put([AliasAs("id")] string id, [Body] string placa);
+    Task<HttpResponseMessage> Put([AliasAs("id")] string id, [Body] UpdateMotorcycleCommand command);
 
     [Get("/motos/{id}")]
     Task<HttpResponseMessage> GetById([AliasAs("id")] string id);

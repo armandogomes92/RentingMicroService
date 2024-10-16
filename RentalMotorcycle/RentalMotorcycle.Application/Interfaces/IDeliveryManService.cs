@@ -4,6 +4,6 @@ namespace RentalMotorcycle.Application.Interfaces;
 
 public interface IDeliveryManService
 {
-    [Get("/deliveryman/{id}")]
-    Task<bool> GetCnhType(string id);
+    [Get("/entregadores/{id}/cnh-tipo")]
+    Task<string> GetCnhType([AliasAs("id")]string id);
 }

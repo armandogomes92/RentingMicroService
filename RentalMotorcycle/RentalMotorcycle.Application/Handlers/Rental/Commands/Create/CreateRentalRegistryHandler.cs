@@ -28,7 +28,7 @@ public class CreateRentalRegistryHandler : CommandHandler<CreateRentalRegistryCo
         {
             _logger.LogError(LogMessages.Finished($"{NameOfClass}"));
 
-            return new Response { Messagem = Messages.InvalidData };
+            return new Response {Content = result, Messagem = Messages.InvalidData };
         }
 
         _logger.LogInformation(LogMessages.Finished(NameOfClass));

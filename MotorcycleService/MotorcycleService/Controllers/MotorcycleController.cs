@@ -28,31 +28,33 @@ public class MotorcycleController : ControllerBase
 
         if (!(bool)response.Content!)
         {
-            return BadRequest(response);
+            return BadRequest(response.Messagem);
         }
 
         return Created();
     }
 
     [HttpGet()]
-    public async Task<IActionResult> GetAll()
+    public async Task<IActionResult> GetAll([FromQuery] string? placa)
     {
-        var query = new GetMotorcyclesQuery();
-        return Ok(await _mediator.Send(query));
+        var query = new GetMotorcyclesQuery { Placa = placa };
+        var result = await _mediator.Send(query);
+        return Ok(result.Content);
     }
 
     [HttpPut("{id}/placa")]
     [ProducesResponseType(typeof(Response), 200)]
     [ProducesResponseType(typeof(Response), 400)]
-    public async Task<IActionResult> Update(int id, [FromBody] UpdateMotorcycleCommand command)
+    public async Task<IActionResult> Update(string id, [FromBody] UpdateMotorcycleCommand command)
     {
+        command.Identificador = id;
         var response = await _mediator.Send(command);
 
         if (!(bool)response.Content!)
         {
-            return BadRequest(response);
+            return BadRequest(response.Messagem);
         }
-        return Ok(response);
+        return Ok(response.Messagem);
     }
 
     [HttpGet("{id}")]
@@ -71,13 +73,13 @@ public class MotorcycleController : ControllerBase
 
 
     [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete(DeleteMotorcycleByIdCommand command)
+    public async Task<IActionResult> Delete(string id)
     {
-        var response = await _mediator.Send(command);
+        var response = await _mediator.Send(new DeleteMotorcycleByIdCommand { Id = id});
 
         if (!string.IsNullOrEmpty(response.Messagem))
         {
-            return BadRequest(response);
+            return BadRequest(response.Messagem);
         }
         return Ok();
     }

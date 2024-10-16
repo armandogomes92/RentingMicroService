@@ -4,6 +4,7 @@ using RentalMotorcycle.Domain.Models;
 using RentalMotorcycle.Infrastructure.DataContext;
 using RentalMotorcycle.Infrastructure.Interfaces;
 using RentalMotorcycle.Infrastructure.Logging;
+using RentalMotorcycle.Infrastructure.Migrations;
 
 namespace RentalMotorcycle.Infrastructure.Repositories;
 
@@ -20,13 +21,13 @@ public class RentalRepository : IRentalRepository
         _logger = logger;
     }
 
-    public async Task<bool> AddRentalRegistryAsync(Rental rental)
+    public async Task<bool> AddRentalRegistryAsync(Domain.Models.Rental rental)
     {
         var nameForLog = $"{NameOfClass} {nameof(AddRentalRegistryAsync)}";
 
         _logger.LogInformation(LogMessages.Finished(nameForLog));
 
-        if (!CheckMotorcycleAvailability(rental.MotoId).Result)
+        if (CheckMotorcycleAvailability(rental.MotoId).Result)
         {
             _logger.LogError(LogMessages.Finished(nameForLog));
             return false;
@@ -39,7 +40,7 @@ public class RentalRepository : IRentalRepository
         return await _context.SaveChangesAsync() > 0;
     }
 
-    public async Task<Rental> GetRentalByIdAsync(int identificador)
+    public async Task<Domain.Models.Rental> GetRentalByIdAsync(int identificador)
     {
         var nameForLog = $"{NameOfClass} {nameof(GetRentalByIdAsync)}";
 
@@ -59,21 +60,16 @@ public class RentalRepository : IRentalRepository
         return rental;
     }
 
-    public async Task<bool> EndRentalAsync(Rental rental)
+    public async Task<bool> EndRentalAsync(Domain.Models.Rental rentalToFinish)
     {
         var nameForLog = $"{NameOfClass} {nameof(EndRentalAsync)}";
-
         _logger.LogInformation(LogMessages.Start(nameForLog));
 
-        var rentalToFinish = await GetRentalByIdAsync(rental.Identificador);
+        rentalToFinish.DataInicio = DateTime.SpecifyKind(rentalToFinish.DataInicio, DateTimeKind.Utc);
+        rentalToFinish.DataTermino = DateTime.SpecifyKind(rentalToFinish.DataTermino, DateTimeKind.Utc);
+        rentalToFinish.DataPrevisaoTermino = DateTime.SpecifyKind(rentalToFinish.DataPrevisaoTermino, DateTimeKind.Utc);
 
-        if (rentalToFinish == null)
-        {
-            _logger.LogError(LogMessages.Finished(nameForLog));
-            return false;
-        }
-        rental.Rented = false;
-        _context.Rental.Update(rental);
+        _context.Rental.Update(rentalToFinish);
 
         _logger.LogInformation(LogMessages.Finished(nameForLog));
 
@@ -84,7 +80,7 @@ public class RentalRepository : IRentalRepository
     {
         var nameForLog = $"{NameOfClass} {nameof(CheckMotorcycleAvailability)}";
         var check = await _context.Rental.Where(s => s.MotoId == motorcycleId && s.Rented).FirstOrDefaultAsync();
-        return check == null;
+        return check != null;
     }
 
     private float GetDailyRentalPrice(int plano)
@@ -100,7 +96,7 @@ public class RentalRepository : IRentalRepository
         }
     }
 
-    public decimal CalculateTotalRentingCost(Rental rental, DateTime dataDevolucao)
+    public decimal CalculateTotalRentingCost(Domain.Models.Rental rental)
     {
         var nameForLog = $"{NameOfClass} {nameof(CalculateTotalRentingCost)}";
 
@@ -108,13 +104,13 @@ public class RentalRepository : IRentalRepository
 
         var valorDiaria = (decimal)GetDailyRentalPrice(rental.Plano);
         var diasLocacao = (rental.DataTermino - rental.DataInicio).Days;
-        var diasUtilizados = (dataDevolucao - rental.DataInicio).Days;
+        var diasUtilizados = (rental.DataDevolucao!.Value - rental.DataInicio).Days;
 
         decimal valorTotal = diasUtilizados * valorDiaria;
 
-        if (dataDevolucao < rental.DataPrevisaoTermino)
+        if (rental.DataDevolucao! < rental.DataPrevisaoTermino)
         {
-            var diasNaoEfetivados = (rental.DataPrevisaoTermino - dataDevolucao).Days;
+            var diasNaoEfetivados = (rental.DataPrevisaoTermino - rental.DataDevolucao!.Value).Days;
             decimal multa = 0;
 
             switch (rental.Plano)
@@ -129,9 +125,9 @@ public class RentalRepository : IRentalRepository
 
             valorTotal += multa;
         }
-        else if (dataDevolucao > rental.DataPrevisaoTermino)
+        else if (rental.DataDevolucao! > rental.DataPrevisaoTermino)
         {
-            var diasAdicionais = (dataDevolucao - rental.DataPrevisaoTermino).Days;
+            var diasAdicionais = (rental.DataDevolucao!.Value - rental.DataPrevisaoTermino).Days;
             valorTotal += diasAdicionais * 50;
         }
 

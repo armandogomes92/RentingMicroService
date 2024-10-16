@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace DeliveryPilots.Domain.Models;
+namespace RentalMotorcycle.Domain.Models;
 
 public class DeliveryMan
 {

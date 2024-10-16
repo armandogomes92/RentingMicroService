@@ -7,10 +7,6 @@ public class UpdateDeliveryManCommandValidator : AbstractValidator<UpdateDeliver
 {
     public UpdateDeliveryManCommandValidator()
     {
-        RuleFor(x => x.Identificador)
-            .NotEmpty().WithMessage(Messages.InvalidData)
-            .MinimumLength(1).WithMessage(Messages.InvalidData);
-
         RuleFor(x => x.ImagemCnh)
             .NotEmpty().WithMessage(Messages.InvalidData)
             .Must(IsValidImage)

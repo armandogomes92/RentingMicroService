@@ -21,7 +21,7 @@ public class GetMotorcyclesHandler : QueryHandler<GetMotorcyclesQuery>
     {
         _logger.LogInformation(LogMessages.Start(nameof(UpdateMotorcyclePlateHandler)));
 
-        var result = await _motorcycleService.GetMotorcyclesAsync();
+        var result = await _motorcycleService.GetMotorcyclesAsync(query);
 
         _logger.LogInformation(LogMessages.Finished(nameof(UpdateMotorcyclePlateHandler)));
 
