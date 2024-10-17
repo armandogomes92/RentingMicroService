@@ -8,17 +8,10 @@ Este repositório contém uma coleção de soluções .NET para gerenciamento de
 ```sh
    docker-compose build --no-cache 
 ```
+Após 
 
 ```sh
-   docker-compose up -d   # Microservices Solution Overview
-   
-   This repository contains a collection of .NET solutions for managing motorcycles, rentals, delivery personnel, and notifications. The structure is based on microservices, with a gateway expositor (BFFService) that centralizes the service routes.
-   
-   ## Running the Application
-   **Using Docker, navigate to the root of the project in your terminal and execute the following commands**
-   
-   ```sh
-      docker-compose build --no-cache 
+   docker-compose up -d  
 ```
 ## Estrutura das Soluções
 
