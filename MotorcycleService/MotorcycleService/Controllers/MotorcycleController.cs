@@ -5,6 +5,8 @@ using MotorcycleService.Application.Handlers.Motorcycle.Commands.Delete;
 using MotorcycleService.Application.Handlers.Motorcycle.Commands.Update;
 using MotorcycleService.Application.Handlers.Motorcycle.Queries;
 using MotorcycleService.Domain.Resources;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace MotorcycleService.Controllers;
 
@@ -12,11 +14,18 @@ namespace MotorcycleService.Controllers;
 [Route("motos")]
 public class MotorcycleController : ControllerBase
 {
-    private readonly IMediator _mediator;
+    private readonly IMediator _mediator; 
+    private readonly JsonSerializerOptions _jsonSerializerOptions;
+
 
     public MotorcycleController(IMediator mediator)
     {
         _mediator = mediator;
+        _jsonSerializerOptions = new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true,
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+        };
     }
 
     [HttpPost()]
@@ -27,8 +36,8 @@ public class MotorcycleController : ControllerBase
         var response = await _mediator.Send(command);
 
         if (!(bool)response.Content!)
-        {
-            return BadRequest(response.Messagem);
+        { 
+            return BadRequest(response);
         }
 
         return Created();
@@ -39,7 +48,7 @@ public class MotorcycleController : ControllerBase
     {
         var query = new GetMotorcyclesQuery { Placa = placa };
         var result = await _mediator.Send(query);
-        return Ok(result.Content);
+        return Ok(result);
     }
 
     [HttpPut("{id}/placa")]
@@ -52,9 +61,9 @@ public class MotorcycleController : ControllerBase
 
         if (!(bool)response.Content!)
         {
-            return BadRequest(response.Messagem);
+            return BadRequest(response);
         }
-        return Ok(response.Messagem);
+        return Ok(response);
     }
 
     [HttpGet("{id}")]
@@ -77,9 +86,9 @@ public class MotorcycleController : ControllerBase
     {
         var response = await _mediator.Send(new DeleteMotorcycleByIdCommand { Id = id});
 
-        if (!string.IsNullOrEmpty(response.Messagem))
+        if (!(bool)response.Content!)
         {
-            return BadRequest(response.Messagem);
+            return BadRequest(response);
         }
         return Ok();
     }

@@ -1,7 +1,9 @@
 using BFFService.Models;
+using BFFService.Ressources;
 using BFFService.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace BFFService.Controllers
 {
@@ -11,10 +13,16 @@ namespace BFFService.Controllers
     public class MotosController : ControllerBase
     {
         private readonly IMotorcycleService _motorcycleService;
+        private readonly JsonSerializerOptions _jsonSerializerOptions;
 
         public MotosController(IMotorcycleService motorcycleService)
         {
             _motorcycleService = motorcycleService;
+            _jsonSerializerOptions = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true,
+                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+            };
         }
 
         /// <summary>
@@ -24,27 +32,26 @@ namespace BFFService.Controllers
         public async Task<IActionResult> Post([FromBody] Moto moto)
         {
             var response = await _motorcycleService.Post(moto);
-            if (response.IsSuccessStatusCode)
+            var motos = await response.Content.ReadAsStringAsync();
+            if (!response.IsSuccessStatusCode)
             {
-                var motos = await response.Content.ReadAsStreamAsync();
-                return Ok(motos);
+                var result = new Response { Content = new { Mensagem = Messages.IvalidData } };
+                return BadRequest(result.Content);
             }
-            return StatusCode((int)response.StatusCode, response.ReasonPhrase);
+            return Created();
         }
 
         /// <summary>
-        /// Obtém todas as motos.
+        /// Obtï¿½m todas as motos.
         /// </summary>
         [HttpGet]
         public async Task<IActionResult> Get([FromQuery] string? placa)
         {
             var response = await _motorcycleService.GetMotos(placa);
-            if (response.IsSuccessStatusCode)
-            {
-                var motos = await response.Content.ReadAsStreamAsync();
-                return Ok(motos);
-            }
-            return StatusCode((int)response.StatusCode, response.ReasonPhrase);
+            string motos = await response.Content.ReadAsStringAsync();
+            var result = JsonSerializer.Deserialize<Response>(motos, _jsonSerializerOptions);
+
+            return Ok(result!.Content);
         }
 
         /// <summary>
@@ -54,30 +61,38 @@ namespace BFFService.Controllers
         public async Task<IActionResult> Put(string id, [FromBody] UpdateMotorcycleCommand command)
         {
             var response = await _motorcycleService.Put(id, command);
+            string placaReturn = await response.Content.ReadAsStringAsync();
+            var result = JsonSerializer.Deserialize<Response>(placaReturn, _jsonSerializerOptions);
 
             if (!response.IsSuccessStatusCode)
             {
-                return BadRequest();
+                return BadRequest(result!.Content);
             }
-            var content = await response.Content.ReadAsStreamAsync();
-            return Ok(content);
+
+            return Ok();
         }
 
         /// <summary>
-        /// Obtém uma moto pelo ID.
+        /// Obtï¿½m uma moto pelo ID.
         /// </summary>
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(string id)
         {
+            if (string.IsNullOrWhiteSpace(id))
+            {
+                return BadRequest(new Response { Content = Messages.BadFormatRequest });
+            }
             var response = await _motorcycleService.GetById(id);
 
-            if (!response.IsSuccessStatusCode)
+            if ((int)response.StatusCode == 404)
             {
-                return BadRequest();
+                return NotFound(new Response { Content = Messages.MotorcycleNotFound });
             }
-            var content = await response.Content.ReadAsStreamAsync();
 
-            return Ok(content);
+            string moto = await response.Content.ReadAsStringAsync();
+            var result = JsonSerializer.Deserialize<Response>(moto, _jsonSerializerOptions);
+
+            return Ok(result!.Content);
         }
 
         /// <summary>
@@ -90,10 +105,9 @@ namespace BFFService.Controllers
 
             if (!response.IsSuccessStatusCode)
             {
-                return BadRequest();
+                return BadRequest(new Response { Content = Messages.BadFormatRequest });
             }
-            var content = await response.Content.ReadAsStreamAsync();
-            return Ok(content);
+            return Ok();
         }
     }
 }

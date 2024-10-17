@@ -38,11 +38,11 @@ public class MotorcycleRepository : IMotorcycleRepository
         var result = _context.Motorcycle.AsNoTracking();
 
         if (!String.IsNullOrEmpty(placa)) 
-            result.AsNoTracking().Where(x => x.Placa == placa);
+            return await result.Where(x => x.Placa == placa).ToListAsync();
 
         _logger.LogInformation(LogMessages.Finished($"{NameOfClass} {nameof(GetAllMotorcyclesAsync)}"));
 
-        return result.ToList();
+        return await result.ToListAsync();
     }
 
     public async Task<bool> UpdateMotorcycleByIdAsync(Motorcycle moto)

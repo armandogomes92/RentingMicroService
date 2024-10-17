@@ -8,4 +8,6 @@ public static class Messages
     public static string MotorcycleNotFound = "Moto não encontrada";
     public static string UpdatePlate = "Placa modificada com sucesso";
     public static string BadRequest = "Request mal formada";
+    public static string MotorcycleRentRegistryNotFound = "Locação não encontrada";
+    public static string ReturnedDate = "Data de devolução informada com sucesso";
 }

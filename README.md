@@ -3,9 +3,22 @@
 Este repositório contém uma coleção de soluções .NET para gerenciamento de motocicletas, locações, entregadores e notificações. A estrutura é baseada em microservices, com um gateway expositor (BFFService) que centraliza as rotas dos serviços.
 
 ## Para Executar a aplicação
-**Utilizando Docker você navegará até a raiz do projeto no seu terminal e executara e seguint comando**
+**Utilizando Docker você navegará até a raiz do projeto no seu terminal e executara e seguintes comandos**
+
 ```sh
-   docker-compose up --build
+   docker-compose build --no-cache 
+```
+
+```sh
+   docker-compose up -d   # Microservices Solution Overview
+   
+   This repository contains a collection of .NET solutions for managing motorcycles, rentals, delivery personnel, and notifications. The structure is based on microservices, with a gateway expositor (BFFService) that centralizes the service routes.
+   
+   ## Running the Application
+   **Using Docker, navigate to the root of the project in your terminal and execute the following commands**
+   
+   ```sh
+      docker-compose build --no-cache 
 ```
 ## Estrutura das Soluções
 

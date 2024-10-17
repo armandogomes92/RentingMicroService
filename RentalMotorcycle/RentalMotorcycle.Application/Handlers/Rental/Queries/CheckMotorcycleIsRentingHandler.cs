@@ -22,11 +22,7 @@ public class CheckMotorcycleIsRentingHandler : QueryHandler<CheckMotorcycleIsRen
         _logger.LogInformation(LogMessages.Start($"{NameOfClass}"));
 
         var result = await _rentalService.CheckMotorcycleIsRenting(query.Identificador);
-        if (!result)
-        {
-            _logger.LogInformation(LogMessages.Finished(NameOfClass));
-            return new Response { Content = result, Messagem = Messages.InvalidData };
-        }
+       
         _logger.LogError(LogMessages.Finished(NameOfClass));
         return new Response { Content = result };
     }

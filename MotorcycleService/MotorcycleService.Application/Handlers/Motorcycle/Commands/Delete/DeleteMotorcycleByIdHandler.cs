@@ -25,19 +25,16 @@ public class DeleteMotorcycleByIdHandler : CommandHandler<DeleteMotorcycleByIdCo
 
         var result = await _motorcycleService.DeleteMotorcycleByIdAsync(command, cancellationToken);
 
-        Response response = new Response();
-
         if (!result)
         {
             _logger.LogInformation(LogMessages.Finished(Name));
 
-            response.Messagem = Messages.IvalidData;
+            
 
-            return response;
+            return new Response { Content = new { Mensagem = Messages.IvalidData } };
         }
         _logger.LogInformation(LogMessages.Finished(Name));
 
-        response.Messagem = "";
-        return response;
+        return new Response { Content = result };
     }
 }

@@ -27,18 +27,25 @@ namespace RentalMotorcycle.Controllers
 
             if (!(bool)response.Content!)
             {
-                return BadRequest(response);
+                return BadRequest(new Response { Content = new { Mensagem = Messages.InvalidData } });
             }
 
             return Created();
         }
 
         [HttpGet("{id}")]
+        [ProducesResponseType(typeof(Response), 200)]
+        [ProducesResponseType(typeof(Response), 400)]
+        [ProducesResponseType(typeof(Response), 404)]
         public async Task<IActionResult> Get(int id)
         {
             var query = new GetRentalRegistryByIdQuery { Identificador = id};
             var result = await _mediator.Send(query);
-            return Ok(result.Content);
+            if (result.Content == null)
+            {
+                return NotFound(new Response { Content = new { Messagem = Messages.MotorcycleRentRegistryNotFound } });
+            }
+            return Ok(result);
         }
 
         [HttpPut("{id}/devolucao")]
@@ -61,6 +68,7 @@ namespace RentalMotorcycle.Controllers
         public async Task<IActionResult> GetRental( string id)
         {
             var result = await _mediator.Send(new CheckMotorcycleIsRentingQuery { Identificador = id });
+            
             return Ok(result.Content);
         }
     }

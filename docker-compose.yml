@@ -113,7 +113,7 @@ services:
       - rabbitmq
       - mongodb
     ports:
-      - "5005:5005"
+      - "5005:80"
     networks:
       - mtt-network
     restart: always

@@ -29,7 +29,7 @@ public class GetMotorcycleByIdHandler : QueryHandler<GetMotorcycleByIdQuery>
         {
             _logger.LogInformation(LogMessages.Finished(Name));
 
-            return new Response { Messagem = Messages.MotorcycleNotFound };
+            return new Response { Content = new { Mensagem = Messages.MotorcycleNotFound } };
         }
         _logger.LogInformation(LogMessages.Finished(Name));
 

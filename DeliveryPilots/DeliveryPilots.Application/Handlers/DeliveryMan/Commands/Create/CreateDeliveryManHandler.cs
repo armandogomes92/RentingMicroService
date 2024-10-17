@@ -24,13 +24,6 @@ public class CreateDeliveryManHandler : CommandHandler<CreateDeliveryManCommand>
 
         var result = await _deliveryManService.CreateDeliveryMan(command);
 
-        if (!result)
-        {
-            _logger.LogError(LogMessages.Finished($"{NameOfClass}"));
-
-            return new Response { Messagem = Messages.InvalidData};
-        }
-
         _logger.LogInformation(LogMessages.Finished(NameOfClass));
 
         return new Response { Content = result };

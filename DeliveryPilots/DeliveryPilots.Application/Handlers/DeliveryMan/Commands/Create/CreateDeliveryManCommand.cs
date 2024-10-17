@@ -20,6 +20,7 @@ public class CreateDeliveryManCommand : Command
     public string NumeroCnh { get; set; }
 
     [Required, JsonPropertyName("tipo_cnh")]
+    [MaxLength(2), MinLength(1)]
     public string TipoCnh { get; set; }
 
     [Required, JsonPropertyName("imagem_cnh")]

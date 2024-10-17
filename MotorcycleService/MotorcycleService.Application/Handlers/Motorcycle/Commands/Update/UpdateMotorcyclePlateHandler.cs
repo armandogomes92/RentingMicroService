@@ -27,11 +27,11 @@ public class UpdateMotorcyclePlateHandler : CommandHandler<UpdateMotorcycleComma
         if (!result)
         {
             _logger.LogWarning(LogMessages.Finished(Name));
-            return new Response {Content = result,  Messagem = Messages.IvalidData };
+            return new Response { Content = new { Messagem = Messages.IvalidData } };
         }
 
         _logger.LogInformation(LogMessages.Finished(Name));
 
-        return new Response { Content = result, Messagem = "Placa modificada com sucesso" };
+        return new Response { Content = result };
     }
 }

@@ -24,11 +24,7 @@ public class UpdateDeliveryManHandler : CommandHandler<UpdateDeliveryManCommand>
         _logger.LogInformation(LogMessages.Start($"{NameOfClass}"));
 
         bool result = await _deliveryManService.UpdateCnhAsync(command);
-        if (!result)
-        {
-            _logger.LogInformation(LogMessages.Finished(NameOfClass));
-            return new Response { Messagem = Messages.InvalidData };
-        }
+        
         _logger.LogError(LogMessages.Finished(NameOfClass));
         return new Response { Content = result };
     }

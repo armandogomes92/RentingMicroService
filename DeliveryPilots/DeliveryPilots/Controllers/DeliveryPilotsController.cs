@@ -23,9 +23,9 @@ public class DeliveryPilotsController : ControllerBase
     {
         var response = await _mediator.Send(command);
 
-        if (!String.IsNullOrEmpty(response.Messagem))
+        if (!(bool)response.Content!)
         {
-            return BadRequest(response);
+            return BadRequest(new Response { Content = new { Messagem = Messages.InvalidData } });
         }
 
         return Created();
@@ -43,12 +43,12 @@ public class DeliveryPilotsController : ControllerBase
         };
         var response = await _mediator.Send(command);
 
-        if (!String.IsNullOrEmpty(response.Messagem))
+        if (!(bool)response.Content!)
         {
-            return BadRequest(response);
+            return BadRequest(new Response { Content = new { Messagem = Messages.InvalidData } });
         }
 
-        return Created();
+        return Ok(response);
     }
 
     [HttpGet("{id}/cnh-tipo")]
@@ -58,11 +58,10 @@ public class DeliveryPilotsController : ControllerBase
     {
         var response = await _mediator.Send(new GetCategoryOfDeliveryManQuery { Identificador = id });
 
-        if (!String.IsNullOrEmpty(response.Messagem))
+        if (!response.Content!.ToString()!.ToUpper().Contains('A'))
         {
-            return BadRequest(response);
+            return BadRequest(response.Content);
         }
-
         return Ok(response.Content);
     }
 }

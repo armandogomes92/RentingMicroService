@@ -113,6 +113,6 @@ public class RentalService : IRentalService
 
         var cnhType = await _deliveryManService.GetCnhType(deliveryManId);
 
-        return cnhType.ToUpper() == "A" || cnhType.ToUpper() == "AB" ? true : false;
+        return cnhType.ToUpper().Contains("A");
     }
 }

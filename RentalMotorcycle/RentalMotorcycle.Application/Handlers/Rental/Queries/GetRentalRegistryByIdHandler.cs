@@ -23,11 +23,7 @@ public class GetRentalRegistryByIdHandler : QueryHandler<GetRentalRegistryByIdQu
         _logger.LogInformation(LogMessages.Start($"{NameOfClass}"));
 
         var result = await _rentalRegistryRepository.GetRentalById(command.Identificador);
-        if (result == null)
-        {
-            _logger.LogInformation(LogMessages.Finished(NameOfClass));
-            return new Response { Messagem = Messages.InvalidData };
-        }
+
         _logger.LogError(LogMessages.Finished(NameOfClass));
         return new Response { Content = result };
     }
