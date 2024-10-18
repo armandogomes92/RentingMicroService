@@ -5,16 +5,16 @@ Este repositório contém uma coleção de soluções .NET para gerenciamento de
 ## Para Executar a aplicação
 **Utilizando Docker você navegará até a raiz do projeto no seu terminal e executara e seguintes comandos**
 
-**Passo 1
+**Passo 1**
 ```sh
    docker network create mtt-network
 ```
-**Passo 2
+**Passo 2**
 
 ```sh
    docker-compose build --no-cache 
 ```
-**Passo 3 
+**Passo 3**
 
 ```sh
    docker-compose up -d  
