@@ -7,6 +7,7 @@ namespace RentalMotorcycle.Application.Handlers.Rental.Commands.Update;
 public class UpdateRentalRegistryCommand : Command
 {
     [Required]
+    [JsonIgnore]
     public int Identificador { get; set; }
     [Required]
     [JsonPropertyName("data_devolucao")]

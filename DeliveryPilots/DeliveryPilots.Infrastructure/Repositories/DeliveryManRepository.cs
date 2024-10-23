@@ -3,6 +3,7 @@ using DeliveryPilots.Domain.Resources;
 using DeliveryPilots.Infrastructure.DataContext;
 using DeliveryPilots.Infrastructure.Interfaces;
 using DeliveryPilots.Infrastructure.Logging;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace DeliveryPilots.Infrastructure.Repositories;
@@ -72,10 +73,49 @@ public class DeliveryManRepository : IDeliveryManRepository
         if (deliveryMan == null)
         {
             _logger.LogError(LogMessages.Finished(nameForLog));
-            return Messages.InvalidData;
+            return null;
         }
         _logger.LogInformation(LogMessages.Finished(nameForLog));
 
         return deliveryMan.TipoCnh;
+    }
+
+    public async Task<bool> CheckIfExistDeliverymanById(string id)
+    {
+        var nameForLog = $"{NameOfClass} {nameof(CheckIfExistDeliverymanById)}";
+
+        _logger.LogInformation(LogMessages.Start(nameForLog));
+
+        var deliveryMan = await _context.DeliveryMan.FindAsync(id);
+
+        _logger.LogInformation(LogMessages.Finished(nameForLog));
+
+        return deliveryMan != null;
+    }
+
+    public async Task<bool> CheckIfExistDeliverymanByCnpj(string cnpj)
+    {
+        var nameForLog = $"{NameOfClass} {nameof(CheckIfExistDeliverymanByCnpj)}";
+
+        _logger.LogInformation(LogMessages.Start(nameForLog));
+
+        var deliveryMan = await _context.DeliveryMan.FirstOrDefaultAsync(x => x.Cnpj == cnpj);
+
+        _logger.LogInformation(LogMessages.Finished(nameForLog));
+
+        return deliveryMan != null;
+    }
+
+    public async Task<bool> CheckIfExistDeliverymanByCnhNumber(string cnhNumber)
+    {
+        var nameForLog = $"{NameOfClass} {nameof(CheckIfExistDeliverymanByCnhNumber)}";
+
+        _logger.LogInformation(LogMessages.Start(nameForLog));
+
+        var deliveryMan = await _context.DeliveryMan.FirstOrDefaultAsync(x => x.NumeroCnh == cnhNumber);
+
+        _logger.LogInformation(LogMessages.Finished(nameForLog));
+
+        return deliveryMan != null;
     }
 }

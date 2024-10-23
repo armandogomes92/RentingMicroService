@@ -37,11 +37,14 @@ namespace BFFService.Controllers
         public async Task<IActionResult> Post([FromBody] CreateDeliveryManCommand command)
         {
             var response = await _deliveryMan.PostEntregadores(command);
-            if(!response.IsSuccessStatusCode)
+
+            if ((int)response.StatusCode != 201)
             {
-                return BadRequest(_badRequestResponse);
+                string deliveryMan = await response.Content.ReadAsStringAsync();
+                var result = JsonSerializer.Deserialize<object>(deliveryMan, _jsonSerializerOptions);
+                return StatusCode((int)response.StatusCode, result);
             }
-            return Created();
+            return StatusCode((int)response.StatusCode);
         }
 
         /// <summary>
@@ -52,11 +55,13 @@ namespace BFFService.Controllers
         {
             var response = await _deliveryMan.PostCnh(id, imagemCnh);
 
-            if (!response.IsSuccessStatusCode)
+            if ((int)response.StatusCode != 201)
             {
-                return BadRequest(_badRequestResponse);
+                string deliveryMan = await response.Content.ReadAsStringAsync();
+                var result = JsonSerializer.Deserialize<object>(deliveryMan, _jsonSerializerOptions);
+                return StatusCode((int)response.StatusCode, result);
             }
-            return Created();
+            return StatusCode((int)response.StatusCode);
         }
     }
 }

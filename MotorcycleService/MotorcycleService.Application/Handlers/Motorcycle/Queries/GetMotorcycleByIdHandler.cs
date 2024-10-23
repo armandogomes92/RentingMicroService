@@ -23,7 +23,7 @@ public class GetMotorcycleByIdHandler : QueryHandler<GetMotorcycleByIdQuery>
     {
         _logger.LogInformation(LogMessages.Start(Name));
 
-        var result = await _motorcycleService.GetMotorcycleByIdAsync(query);
+        var result = await _motorcycleService.GetMotorcycleByIdAsync(query.Id);
 
         if (result == null)
         {

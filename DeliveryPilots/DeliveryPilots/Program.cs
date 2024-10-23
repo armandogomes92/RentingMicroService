@@ -1,6 +1,11 @@
+using DeliveryPilots;
+using DeliveryPilots.Application.Handlers.DeliveryMan.Commands.Create;
+using DeliveryPilots.Application.Handlers.DeliveryMan.Commands.Update;
+using DeliveryPilots.Application.Handlers.DeliveryMan.Queries;
 using DeliveryPilots.Infrastructure.DataContext;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
-using MotorcycleService;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,6 +18,12 @@ builder.WebHost.ConfigureKestrel(options =>
 // Add services to the container.
 
 builder.Services.AddControllers();
+
+builder.Services.AddValidatorsFromAssemblyContaining<CreateDeliveryManCommandValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<UpdateDeliveryManCommandValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<GetCategoryOfDeliveryManQueryValidator>();
+builder.Services.AddFluentValidationAutoValidation();
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

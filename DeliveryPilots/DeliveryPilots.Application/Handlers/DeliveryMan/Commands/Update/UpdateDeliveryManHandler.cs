@@ -23,6 +23,14 @@ public class UpdateDeliveryManHandler : CommandHandler<UpdateDeliveryManCommand>
     {
         _logger.LogInformation(LogMessages.Start($"{NameOfClass}"));
 
+        var checkIfExistDeliveryMan = await _deliveryManService.CheckIfExistDeliverymanById(command.Identificador);
+
+        if (!checkIfExistDeliveryMan)
+        {
+            _logger.LogWarning(LogMessages.Finished(NameOfClass));
+            return new Response { Content = new { Mensagem = Messages.DeliveryManNotFound } };
+        }
+
         bool result = await _deliveryManService.UpdateCnhAsync(command);
         
         _logger.LogError(LogMessages.Finished(NameOfClass));

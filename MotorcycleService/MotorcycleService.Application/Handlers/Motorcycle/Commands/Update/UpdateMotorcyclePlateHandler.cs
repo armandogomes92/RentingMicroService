@@ -22,13 +22,15 @@ public class UpdateMotorcyclePlateHandler : CommandHandler<UpdateMotorcycleComma
     {
         _logger.LogInformation(LogMessages.Start(Name));
 
-        var result = await _motorcycleService.UpdateMotorcycleByIdAsync(command, cancellationToken);
+        var existingplate = await _motorcycleService.GetMotorcyclesByPlateAsync(command.Placa);
 
-        if (!result)
+        if(existingplate != null)
         {
             _logger.LogWarning(LogMessages.Finished(Name));
-            return new Response { Content = new { Messagem = Messages.IvalidData } };
+            return new Response { Content = new { Messagem = Messages.PlateAlreadyHasRegistration } };
         }
+
+        var result = await _motorcycleService.UpdateMotorcycleByIdAsync(command, cancellationToken);
 
         _logger.LogInformation(LogMessages.Finished(Name));
 

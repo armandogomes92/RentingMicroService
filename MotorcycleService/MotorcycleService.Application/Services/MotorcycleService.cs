@@ -8,7 +8,6 @@ using MotorcycleService.Application.Handlers.Motorcycle.Queries;
 using MotorcycleService.Application.Interfaces;
 using MotorcycleService.Infrastructure.Interfaces;
 using MotorcycleService.Domain.Models;
-using Refit;
 
 namespace MotorcycleService.Application.Services;
 public class MotorcycleService : IMotorcycleService
@@ -60,13 +59,26 @@ public class MotorcycleService : IMotorcycleService
 
         return result;
     }
-    public async Task<IEnumerable<Motorcycle>> GetMotorcyclesAsync(GetMotorcyclesQuery query)
+    public async Task<IEnumerable<Motorcycle>> GetMotorcyclesAsync()
     {
         string nameForLog = $"{NameOfClass} {nameof(GetMotorcyclesAsync)}";
 
         _logger.LogInformation(LogMessages.Start(nameForLog));
 
-        var result = await _motoRepository.GetAllMotorcyclesAsync(query.Placa);
+        var result = await _motoRepository.GetAllMotorcyclesAsync();
+
+        _logger.LogInformation(LogMessages.Finished(nameForLog));
+
+        return result;
+    }
+
+    public async Task<Motorcycle> GetMotorcyclesByPlateAsync(string plate)
+    {
+        string nameForLog = $"{NameOfClass} {nameof(GetMotorcyclesByPlateAsync)}";
+
+        _logger.LogInformation(LogMessages.Start(nameForLog));
+
+        var result = await _motoRepository.GetMotorcycleByPlateAsync(plate);
 
         _logger.LogInformation(LogMessages.Finished(nameForLog));
 
@@ -93,13 +105,13 @@ public class MotorcycleService : IMotorcycleService
 
         return result;
     }
-    public async Task<Motorcycle> GetMotorcycleByIdAsync(GetMotorcycleByIdQuery query)
+    public async Task<Motorcycle> GetMotorcycleByIdAsync(string id)
     {
         string nameForLog = $"{NameOfClass} {nameof(GetMotorcycleByIdAsync)}";
 
         _logger.LogInformation(LogMessages.Start(nameForLog));
 
-        var result = await _motoRepository.GetMotorcycleByIdAsync(query.Id);
+        var result = await _motoRepository.GetMotorcycleByIdAsync(id);
 
         _logger.LogInformation(LogMessages.Finished(nameForLog));
 
@@ -127,14 +139,6 @@ public class MotorcycleService : IMotorcycleService
     }
     private async Task<bool> CheckMotorcycleRental(string identificador)
     {
-        try
-        {
-            return await _rentalService.CheckMotorcycleIsRenting(identificador);
-        }
-        catch (Exception ex)
-        {
-
-            throw ex;
-        }
+       return await _rentalService.CheckMotorcycleIsRenting(identificador);
     }
 }

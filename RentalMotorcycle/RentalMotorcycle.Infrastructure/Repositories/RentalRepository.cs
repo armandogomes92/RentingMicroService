@@ -1,10 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using RentalMotorcycle.Domain.Models;
 using RentalMotorcycle.Infrastructure.DataContext;
 using RentalMotorcycle.Infrastructure.Interfaces;
 using RentalMotorcycle.Infrastructure.Logging;
-using RentalMotorcycle.Infrastructure.Migrations;
 
 namespace RentalMotorcycle.Infrastructure.Repositories;
 
@@ -27,11 +25,6 @@ public class RentalRepository : IRentalRepository
 
         _logger.LogInformation(LogMessages.Finished(nameForLog));
 
-        if (CheckMotorcycleAvailability(rental.MotoId).Result)
-        {
-            _logger.LogError(LogMessages.Finished(nameForLog));
-            return false;
-        }
         rental.Rented = true;
         await _context.Rental.AddAsync(rental);
 
@@ -79,7 +72,9 @@ public class RentalRepository : IRentalRepository
     public async Task<bool> CheckMotorcycleAvailability(string motorcycleId)
     {
         var nameForLog = $"{NameOfClass} {nameof(CheckMotorcycleAvailability)}";
-        var check = await _context.Rental.Where(s => s.MotoId == motorcycleId && s.Rented).FirstOrDefaultAsync();
+
+        var check = await _context.Rental.FirstOrDefaultAsync(s => s.MotoId == motorcycleId && s.Rented);
+
         return check != null;
     }
 
@@ -108,7 +103,7 @@ public class RentalRepository : IRentalRepository
 
         decimal valorTotal = diasUtilizados * valorDiaria;
 
-        if (rental.DataDevolucao! < rental.DataPrevisaoTermino)
+        if (rental.DataDevolucao.Value.Date! < rental.DataPrevisaoTermino.Date)
         {
             var diasNaoEfetivados = (rental.DataPrevisaoTermino - rental.DataDevolucao!.Value).Days;
             decimal multa = 0;
@@ -125,7 +120,7 @@ public class RentalRepository : IRentalRepository
 
             valorTotal += multa;
         }
-        else if (rental.DataDevolucao! > rental.DataPrevisaoTermino)
+        else if (rental.DataDevolucao!.Value.Date > rental.DataPrevisaoTermino.Date)
         {
             var diasAdicionais = (rental.DataDevolucao!.Value - rental.DataPrevisaoTermino).Days;
             valorTotal += diasAdicionais * 50;

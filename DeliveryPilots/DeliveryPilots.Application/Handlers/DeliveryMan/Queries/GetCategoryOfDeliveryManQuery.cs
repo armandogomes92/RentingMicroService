@@ -1,7 +1,7 @@
 ﻿using DeliveryPilots.Application.Handlers.CommonResources;
 using System.ComponentModel.DataAnnotations;
 
-namespace DeliveryPilots.Application.Handlers.DeliveryMan.Commands.Create;
+namespace DeliveryPilots.Application.Handlers.DeliveryMan.Queries;
 
 public class GetCategoryOfDeliveryManQuery : Query
 {

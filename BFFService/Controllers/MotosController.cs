@@ -32,13 +32,13 @@ namespace BFFService.Controllers
         public async Task<IActionResult> Post([FromBody] Moto moto)
         {
             var response = await _motorcycleService.Post(moto);
-            var motos = await response.Content.ReadAsStringAsync();
-            if (!response.IsSuccessStatusCode)
+            if ((int)response.StatusCode != 201)
             {
-                var result = new Response { Content = new { Mensagem = Messages.IvalidData } };
-                return BadRequest(result.Content);
+                var motos = await response.Content.ReadAsStringAsync();
+                var result = JsonSerializer.Deserialize<object>(motos, _jsonSerializerOptions);
+                return StatusCode((int)response.StatusCode, result!);
             }
-            return Created();
+            return StatusCode((int)response.StatusCode);
         }
 
         /// <summary>
@@ -49,9 +49,9 @@ namespace BFFService.Controllers
         {
             var response = await _motorcycleService.GetMotos(placa);
             string motos = await response.Content.ReadAsStringAsync();
-            var result = JsonSerializer.Deserialize<Response>(motos, _jsonSerializerOptions);
+            var result = JsonSerializer.Deserialize<object>(motos, _jsonSerializerOptions);
 
-            return Ok(result!.Content);
+            return StatusCode((int)response.StatusCode, result!);
         }
 
         /// <summary>
@@ -62,14 +62,9 @@ namespace BFFService.Controllers
         {
             var response = await _motorcycleService.Put(id, command);
             string placaReturn = await response.Content.ReadAsStringAsync();
-            var result = JsonSerializer.Deserialize<Response>(placaReturn, _jsonSerializerOptions);
+            var result = JsonSerializer.Deserialize<object>(placaReturn, _jsonSerializerOptions);
 
-            if (!response.IsSuccessStatusCode)
-            {
-                return BadRequest(result!.Content);
-            }
-
-            return Ok();
+            return StatusCode((int)response.StatusCode, result!);
         }
 
         /// <summary>
@@ -78,21 +73,11 @@ namespace BFFService.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(string id)
         {
-            if (string.IsNullOrWhiteSpace(id))
-            {
-                return BadRequest(new Response { Content = Messages.BadFormatRequest });
-            }
             var response = await _motorcycleService.GetById(id);
-
-            if ((int)response.StatusCode == 404)
-            {
-                return NotFound(new Response { Content = Messages.MotorcycleNotFound });
-            }
-
             string moto = await response.Content.ReadAsStringAsync();
-            var result = JsonSerializer.Deserialize<Response>(moto, _jsonSerializerOptions);
+            var result = JsonSerializer.Deserialize<object>(moto, _jsonSerializerOptions);
 
-            return Ok(result!.Content);
+            return StatusCode((int)response.StatusCode, result);
         }
 
         /// <summary>
@@ -102,12 +87,14 @@ namespace BFFService.Controllers
         public async Task<IActionResult> Delete(string id)
         {
             var response = await _motorcycleService.Delete(id);
+            string moto = await response.Content.ReadAsStringAsync();
 
-            if (!response.IsSuccessStatusCode)
+            if ((int)response.StatusCode != 200)
             {
-                return BadRequest(new Response { Content = Messages.BadFormatRequest });
+                var result = JsonSerializer.Deserialize<object>(moto, _jsonSerializerOptions);
+                return StatusCode((int)response.StatusCode, result!);
             }
-            return Ok();
+            return StatusCode((int)response.StatusCode);
         }
     }
 }

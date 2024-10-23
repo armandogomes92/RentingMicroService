@@ -1,18 +1,19 @@
 ﻿using DeliveryPilots.Application.Handlers.DeliveryMan.Commands.Create;
 using DeliveryPilots.Application.Handlers.DeliveryMan.Commands.Update;
+using DeliveryPilots.Application.Handlers.DeliveryMan.Queries;
 using DeliveryPilots.Application.Interfaces;
 using DeliveryPilots.Application.Services;
 using DeliveryPilots.Infrastructure.Interfaces;
 using DeliveryPilots.Infrastructure.Repositories;
 using System.Reflection;
 
-namespace MotorcycleService;
+namespace DeliveryPilots;
 
 public static class DIConfiguration
 {
     public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration configuration)
     {
-       // Repositórios
+        // Repositórios
         services.AddScoped<IDeliveryManRepository, DeliveryManRepository>();
 
         // Serviços

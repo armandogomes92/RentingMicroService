@@ -31,18 +31,28 @@ public class MotorcycleRepository : IMotorcycleRepository
         return await _context.SaveChangesAsync() > 0;
     }
 
-    public async Task<List<Motorcycle>> GetAllMotorcyclesAsync(string? placa)
+    public async Task<List<Motorcycle>> GetAllMotorcyclesAsync()
     {
         _logger.LogInformation(LogMessages.Start($"{NameOfClass} {nameof(GetAllMotorcyclesAsync)}"));
 
-        var result = _context.Motorcycle.AsNoTracking();
-
-        if (!String.IsNullOrEmpty(placa)) 
-            return await result.Where(x => x.Placa == placa).ToListAsync();
+        var result = await _context.Motorcycle.ToListAsync();
 
         _logger.LogInformation(LogMessages.Finished($"{NameOfClass} {nameof(GetAllMotorcyclesAsync)}"));
 
-        return await result.ToListAsync();
+        return result;
+    }
+    
+    public async Task<Motorcycle?> GetMotorcycleByPlateAsync(string plate)
+    {
+        _logger.LogInformation(LogMessages.Start($"{NameOfClass} {nameof(GetMotorcycleByPlateAsync)}"));
+
+        var normalizedPlate = plate.Trim().ToLower();
+        var result = await _context.Motorcycle
+            .FirstOrDefaultAsync(s => s.Placa.ToLower().Contains(normalizedPlate));
+
+        _logger.LogInformation(LogMessages.Finished($"{NameOfClass} {nameof(GetMotorcycleByPlateAsync)}"));
+
+        return result;
     }
 
     public async Task<bool> UpdateMotorcycleByIdAsync(Motorcycle moto)

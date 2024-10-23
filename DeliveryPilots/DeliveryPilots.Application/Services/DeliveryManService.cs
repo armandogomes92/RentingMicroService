@@ -34,7 +34,7 @@ public class DeliveryManService : IDeliveryManService
             Cnpj = command.Cnpj,
             DataNascimento = command.DataNascimento,
             NumeroCnh = command.NumeroCnh,
-            TipoCnh = command.TipoCnh
+            TipoCnh = command.TipoCnh.ToUpper()
         };
 
         bool resultSaveData = await _deliveryManRepository.AddDeliveryManAsync(deliveryMan);
@@ -69,6 +69,42 @@ public class DeliveryManService : IDeliveryManService
         _logger.LogInformation(LogMessages.Start(nameForLog));
 
         string result = await _deliveryManRepository.GetCnhCategory(id);
+
+        _logger.LogInformation(LogMessages.Finished(nameForLog));
+        return result;
+    }
+
+    public async Task<bool> CheckIfExistDeliverymanById(string id)
+    {
+        string nameForLog = $"{NameOfClass} {nameof(CheckIfExistDeliverymanById)}";
+
+        _logger.LogInformation(LogMessages.Start(nameForLog));
+
+        bool result = await _deliveryManRepository.CheckIfExistDeliverymanById(id);
+
+        _logger.LogInformation(LogMessages.Finished(nameForLog));
+        return result;
+    }
+
+    public async Task<bool> CheckIfExistDeliverymanByCnpj(string cnpj)
+    {
+        string nameForLog = $"{NameOfClass} {nameof(CheckIfExistDeliverymanByCnpj)}";
+
+        _logger.LogInformation(LogMessages.Start(nameForLog));
+
+        bool result = await _deliveryManRepository.CheckIfExistDeliverymanByCnpj(cnpj);
+
+        _logger.LogInformation(LogMessages.Finished(nameForLog));
+        return result;
+    }
+
+    public async Task<bool> CheckIfExistDeliverymanByCnhNumber(string cnhNumber)
+    {
+        string nameForLog = $"{NameOfClass} {nameof(CheckIfExistDeliverymanByCnhNumber)}";
+
+        _logger.LogInformation(LogMessages.Start(nameForLog));
+
+        bool result = await _deliveryManRepository.CheckIfExistDeliverymanByCnhNumber(cnhNumber);
 
         _logger.LogInformation(LogMessages.Finished(nameForLog));
         return result;

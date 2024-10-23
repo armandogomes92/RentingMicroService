@@ -2,15 +2,15 @@ CREATE TABLE motorcycles (
     identificador VARCHAR(255) PRIMARY KEY,
     ano INT NOT NULL,
     modelo VARCHAR(255) NOT NULL,
-    placa VARCHAR(255) NOT NULL
+    placa VARCHAR(255) NOT NULL UNIQUE
 ); 
 
 CREATE TABLE deliverymen (
     identificador VARCHAR(255) PRIMARY KEY,
     nome VARCHAR(255) NOT NULL,
-    cnpj VARCHAR(11) NOT NULL,
+    cnpj VARCHAR(11) NOT NULL UNIQUE,
     data_nascimento TIMESTAMP NOT NULL,
-    numero_cnh VARCHAR(255) NOT NULL,
+    numero_cnh VARCHAR(255) NOT NULL UNIQUE,
     tipo_cnh VARCHAR(2) NOT NULL
 );
 
@@ -42,7 +42,7 @@ INSERT INTO motorcycles (identificador, ano, modelo, placa) VALUES
 -- Inserir 2 entregadores
 INSERT INTO deliverymen (identificador, nome, cnpj, data_nascimento, numero_cnh, tipo_cnh) VALUES
 ('entregador1', 'João Silva', '12345678901', '1994-10-13 08:00:00', '12345678900', 'A'),
-('entregador2', 'Maria Souza', '98765432100', '1984-10-13 08:00:00', '12345678900', 'AB');
+('entregador2', 'Maria Souza', '98765432100', '1984-10-13 08:00:00', '12345678901', 'AB');
 
 -- Inserir 1 locação
 INSERT INTO rentals (entregador_id, moto_id, data_inicio, data_termino, data_previsao_termino, plano, rented, valor_diaria, valor_total) VALUES

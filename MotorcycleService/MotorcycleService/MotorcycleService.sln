@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MotorcycleService.Domain", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MotorcycleService.Infrastructure", "..\MotorcycleService.Infrastructure\MotorcycleService.Infrastructure.csproj", "{EA01DCF2-160C-4DB4-86D4-66F114A8D385}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MotorcycleService.Tests", "..\MotorcycleService.Tests\MotorcycleService.Tests.csproj", "{89EA9F38-A9B1-4ADE-945F-B6D292B3D467}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{EA01DCF2-160C-4DB4-86D4-66F114A8D385}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EA01DCF2-160C-4DB4-86D4-66F114A8D385}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EA01DCF2-160C-4DB4-86D4-66F114A8D385}.Release|Any CPU.Build.0 = Release|Any CPU
+		{89EA9F38-A9B1-4ADE-945F-B6D292B3D467}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{89EA9F38-A9B1-4ADE-945F-B6D292B3D467}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{89EA9F38-A9B1-4ADE-945F-B6D292B3D467}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{89EA9F38-A9B1-4ADE-945F-B6D292B3D467}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

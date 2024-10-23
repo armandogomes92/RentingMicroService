@@ -21,7 +21,18 @@ public class GetMotorcyclesHandler : QueryHandler<GetMotorcyclesQuery>
     {
         _logger.LogInformation(LogMessages.Start(nameof(UpdateMotorcyclePlateHandler)));
 
-        var result = await _motorcycleService.GetMotorcyclesAsync(query);
+        Object result;
+
+        if (String.IsNullOrEmpty(query.Placa))
+            result = await _motorcycleService.GetMotorcyclesAsync();
+        else
+        {
+            result = await _motorcycleService.GetMotorcyclesByPlateAsync(query.Placa);
+            
+            _logger.LogInformation(LogMessages.Finished(nameof(UpdateMotorcyclePlateHandler)));
+            
+            return result == null ? new Response { Content = new { Messangem = Messages.PlateNotFound } } : new Response { Content = result };
+        }
 
         _logger.LogInformation(LogMessages.Finished(nameof(UpdateMotorcyclePlateHandler)));
 

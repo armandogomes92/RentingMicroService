@@ -1,9 +1,14 @@
 using RentalMotorcycle;
 using Microsoft.EntityFrameworkCore;
 using RentalMotorcycle.Infrastructure.DataContext;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Serilog;
 using RentalMotorcycle.Application.Interfaces;
 using Refit;
+using RentalMotorcycle.Application.Handlers.Rental.Commands.Create;
+using RentalMotorcycle.Application.Handlers.Rental.Commands.Update;
+using RentalMotorcycle.Application.Handlers.Rental.Queries;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +18,12 @@ builder.WebHost.ConfigureKestrel(options =>
 });
 
 builder.Services.AddControllers();
+
+builder.Services.AddValidatorsFromAssemblyContaining<CreateRentalRegistryHandler>();
+builder.Services.AddValidatorsFromAssemblyContaining<UpdateRentalRegistryHandler>();
+builder.Services.AddValidatorsFromAssemblyContaining<CheckMotorcycleIsRentingHandler>();
+builder.Services.AddValidatorsFromAssemblyContaining<GetRentalRegistryByIdHandler>();
+builder.Services.AddFluentValidationAutoValidation();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

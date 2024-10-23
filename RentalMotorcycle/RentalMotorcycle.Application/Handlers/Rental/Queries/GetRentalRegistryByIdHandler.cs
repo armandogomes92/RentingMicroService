@@ -25,6 +25,6 @@ public class GetRentalRegistryByIdHandler : QueryHandler<GetRentalRegistryByIdQu
         var result = await _rentalRegistryRepository.GetRentalById(command.Identificador);
 
         _logger.LogError(LogMessages.Finished(NameOfClass));
-        return new Response { Content = result };
+        return new Response { Content = result != null ? new RentalDto(result) : result };
     }
 }

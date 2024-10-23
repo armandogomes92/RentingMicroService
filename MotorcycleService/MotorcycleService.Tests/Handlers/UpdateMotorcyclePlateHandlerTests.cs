@@ -9,48 +9,44 @@ namespace MotorcycleService.Tests.Handlers;
 public class UpdateMotorcyclePlateHandlerTests
 {
     private readonly Mock<IMotorcycleService> _motorcycleServiceMock;
-    private readonly Mock<ILogger<UpdateMotorcyclePlateHandler>> _loggerMock;
     private readonly UpdateMotorcyclePlateHandler _handler;
 
     public UpdateMotorcyclePlateHandlerTests()
     {
         _motorcycleServiceMock = new Mock<IMotorcycleService>();
-        _loggerMock = new Mock<ILogger<UpdateMotorcyclePlateHandler>>();
-        _handler = new UpdateMotorcyclePlateHandler(_motorcycleServiceMock.Object, _loggerMock.Object);
+        _handler = new UpdateMotorcyclePlateHandler(_motorcycleServiceMock.Object, Mock.Of<ILogger<UpdateMotorcyclePlateHandler>>());
     }
 
     [Fact]
     public async Task Handle_ShouldReturnSuccessResponse_WhenUpdateIsSuccessful()
     {
+        var command = new UpdateMotorcycleCommand { Identificador = "1", Placa = "ABC1234" };
+        _motorcycleServiceMock.Setup(service => service.GetMotorcyclesByPlateAsync(command.Placa))
+                              .ReturnsAsync((MotorcycleService.Domain.Models.Motorcycle?)null);
+        _motorcycleServiceMock.Setup(service => service.UpdateMotorcycleByIdAsync(command, CancellationToken.None))
+                              .ReturnsAsync(true);
 
-        var mockMotorcycleService = new Mock<IMotorcycleService>();
-        var mockLogger = new Mock<ILogger<UpdateMotorcyclePlateHandler>>();
-        var handler = new UpdateMotorcyclePlateHandler(mockMotorcycleService.Object, mockLogger.Object);
+        var result = await _handler.Handle(command, CancellationToken.None);
 
-
-        var response = await handler.Handle(new UpdateMotorcycleCommand(), CancellationToken.None);
-
-
-        Assert.Equal(Messages.UpdatePlate, response.Messagem);
-        // Verifique se o método LogInformation foi chamado
+        Assert.NotNull(result);
+        Assert.True((bool)result.Content!);
+        _motorcycleServiceMock.Verify(service => service.GetMotorcyclesByPlateAsync(command.Placa), Times.Once);
+        _motorcycleServiceMock.Verify(service => service.UpdateMotorcycleByIdAsync(command, CancellationToken.None), Times.Once);
     }
 
     [Fact]
-    public async Task Handle_ShouldLogStartAndFinishMessages()
+    public async Task Handle_ShouldReturnPlateAlreadyHasRegistrationMessage_WhenPlateExists()
     {
-
         var command = new UpdateMotorcycleCommand { Identificador = "1", Placa = "ABC1234" };
-        _motorcycleServiceMock.Setup(service => service.UpdateMotorcycleByIdAsync(command, CancellationToken.None)).ReturnsAsync(true);
+        var existingMotorcycle = new MotorcycleService.Domain.Models.Motorcycle { Identificador = "2", Placa = "ABC1234" };
+        _motorcycleServiceMock.Setup(service => service.GetMotorcyclesByPlateAsync(command.Placa))
+                              .ReturnsAsync(existingMotorcycle);
 
+        var result = await _handler.Handle(command, CancellationToken.None);
 
-        await _handler.Handle(command, CancellationToken.None);
-
-
-        _loggerMock.Verify(logger => logger.Log(
-        LogLevel.Information,
-        It.IsAny<EventId>(),
-        It.Is<It.IsAnyType>((v, t) => v.ToString().Contains(nameof(UpdateMotorcyclePlateHandler)) == true),
-        null,
-        It.IsAny<Func<It.IsAnyType, Exception?, string>>()), Times.Exactly(2));
+        Assert.NotNull(result);
+        Assert.Equal(Messages.PlateAlreadyHasRegistration, result.Content?.GetType().GetProperty("Messagem")?.GetValue(result.Content));
+        _motorcycleServiceMock.Verify(service => service.GetMotorcyclesByPlateAsync(command.Placa), Times.Once);
+        _motorcycleServiceMock.Verify(service => service.UpdateMotorcycleByIdAsync(It.IsAny<UpdateMotorcycleCommand>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 }

@@ -24,8 +24,12 @@ public class UpdateRentalRegistryHandler : CommandHandler<UpdateRentalRegistryCo
         _logger.LogInformation(LogMessages.Start($"{NameOfClass}"));
 
         var result = await _deliveryManService.EndRentalAsync(command);
-      
-        _logger.LogError(LogMessages.Finished(NameOfClass));
-        return new Response { Content = result };
+        if (!result)
+        {
+            _logger.LogWarning(LogMessages.Finished(NameOfClass));
+            return new Response { Content = new { Mensagem = Messages.InvalidData } };
+        }
+        _logger.LogInformation(LogMessages.Finished(NameOfClass));
+        return new Response { Content = new { Mensagem = Messages.ReturnedDate } };
     }
 }

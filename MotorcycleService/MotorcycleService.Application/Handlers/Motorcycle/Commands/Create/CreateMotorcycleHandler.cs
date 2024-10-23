@@ -22,12 +22,26 @@ public class CreateMotorcycleHandler : CommandHandler<CreateMotorcycleCommand>
     {
         _logger.LogInformation(LogMessages.Start(Name));
 
-        var result = await _motorcycleService.CreateMotorcycleAsync(command, cancellationToken);
+        var existplate = await _motorcycleService.GetMotorcyclesByPlateAsync(command.Placa);
+        var existId = await _motorcycleService.GetMotorcycleByIdAsync(command.Identificador);
 
-        _logger.LogInformation(LogMessages.Finished(Name));
+        if (existplate != null)
+        {
+            return new Response { Content = new { Mensagem = Messages.PlateAlreadyHasRegistration } };
+        }
+        else if(existId != null)
+        {
+            return new Response { Content = new { Mensagem = Messages.IdentifierAlreadyHasRegistration } };
+        }
+        else
+        {
+            var result = await _motorcycleService.CreateMotorcycleAsync(command, cancellationToken);
 
-        var response = new Response { Content = result };
+            _logger.LogInformation(LogMessages.Finished(Name));
 
-        return response;
+            var response = new Response { Content = result };
+
+            return response;
+        }
     }
 }

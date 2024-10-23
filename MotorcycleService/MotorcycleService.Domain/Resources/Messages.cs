@@ -8,4 +8,7 @@ public static class Messages
     public static string MotorcycleNotFound = "Moto não encontrada";
     public static string UpdatePlate = "Placa modificada com sucesso";
     public static string BadRequest = "Request mal formada";
+    public static string PlateNotFound = "Placa não encontrada";
+    public static string PlateAlreadyHasRegistration = "Placa já cadastrada na base";
+    public static string IdentifierAlreadyHasRegistration = "Identificador já cadastrado na base";
 }

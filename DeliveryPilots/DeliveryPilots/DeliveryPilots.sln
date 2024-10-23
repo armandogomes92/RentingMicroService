@@ -5,11 +5,13 @@ VisualStudioVersion = 17.11.35327.3
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DeliveryPilots", "DeliveryPilots.csproj", "{B3E2F150-EDB0-47B7-90EE-B610F2AB5A9E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeliveryPilots.Domain", "..\DeliveryPilots.Domain\DeliveryPilots.Domain.csproj", "{95C7260E-8614-4997-A726-0D24C14AC844}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DeliveryPilots.Domain", "..\DeliveryPilots.Domain\DeliveryPilots.Domain.csproj", "{95C7260E-8614-4997-A726-0D24C14AC844}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeliveryPilots.Application", "..\DeliveryPilots.Application\DeliveryPilots.Application.csproj", "{DE2EB51B-6796-4249-BEAE-B699526E7567}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DeliveryPilots.Application", "..\DeliveryPilots.Application\DeliveryPilots.Application.csproj", "{DE2EB51B-6796-4249-BEAE-B699526E7567}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeliveryPilots.Infrastructure", "..\DeliveryPilots.Infrastructure\DeliveryPilots.Infrastructure.csproj", "{09A5812B-3979-43D8-BC6C-E3722C21F6DB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DeliveryPilots.Infrastructure", "..\DeliveryPilots.Infrastructure\DeliveryPilots.Infrastructure.csproj", "{09A5812B-3979-43D8-BC6C-E3722C21F6DB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeliveryPilots.Tests", "..\DeliveryPilots.Tests\DeliveryPilots.Tests.csproj", "{174AAC41-3716-4884-A675-C447DD6ED992}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{09A5812B-3979-43D8-BC6C-E3722C21F6DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{09A5812B-3979-43D8-BC6C-E3722C21F6DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{09A5812B-3979-43D8-BC6C-E3722C21F6DB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{174AAC41-3716-4884-A675-C447DD6ED992}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{174AAC41-3716-4884-A675-C447DD6ED992}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{174AAC41-3716-4884-A675-C447DD6ED992}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{174AAC41-3716-4884-A675-C447DD6ED992}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RentalMotorcycle.Infrastruc
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RentalMotorcycle.Application", "..\RentalMotorcycle.Application\RentalMotorcycle.Application.csproj", "{88657CB0-AA2C-443F-948D-60446DF6EB13}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RentalMotorcycle.Tests", "..\RentalMotorcycle.Tests\RentalMotorcycle.Tests.csproj", "{3265993B-907A-475E-A9B5-25DB6A618E22}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{88657CB0-AA2C-443F-948D-60446DF6EB13}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{88657CB0-AA2C-443F-948D-60446DF6EB13}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{88657CB0-AA2C-443F-948D-60446DF6EB13}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3265993B-907A-475E-A9B5-25DB6A618E22}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3265993B-907A-475E-A9B5-25DB6A618E22}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3265993B-907A-475E-A9B5-25DB6A618E22}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3265993B-907A-475E-A9B5-25DB6A618E22}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

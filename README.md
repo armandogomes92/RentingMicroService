@@ -3,7 +3,34 @@
 Este repositório contém uma coleção de soluções .NET para gerenciamento de motocicletas, locações, entregadores e notificações. A estrutura é baseada em microservices, com um gateway expositor (BFFService) que centraliza as rotas dos serviços.
 
 ## Para Executar a aplicação
+
+**Antes de rodar o projeto, exclua todas as informações anteriores do projeto.**
+
+## Limpando a Configuração Anterior do Docker caso já tenha executado antes
+
+Siga estes passos para parar os containers, remover os containers, remover as imagens e remover os volumes relacionados ao projeto:
+
+**Passo 1: Pare todos os containers em execução**
+
+```sh
+docker-compose -f docker-compose down
+```
+
+**Passo 2: Remova todas as imagens**
+
+```sh
+docker rmi $(docker images -q)
+```
+
+**Passo 3: Remova todos os volumes**
+
+```sh
+docker volume rm $(docker volume ls -q)
+```
+
 **Utilizando Docker você navegará até a raiz do projeto no seu terminal e executara e seguintes comandos**
+
+## Caso seja a primeria vez executando, siga a partir daqui as configurações
 
 **Passo 1**
 ```sh

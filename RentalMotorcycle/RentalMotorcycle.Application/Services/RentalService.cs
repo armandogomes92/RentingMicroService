@@ -1,9 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Refit;
 using RentalMotorcycle.Application.Handlers.Rental.Commands.Create;
 using RentalMotorcycle.Application.Handlers.Rental.Commands.Update;
-using RentalMotorcycle.Application.Handlers.Rental.Queries;
 using RentalMotorcycle.Application.Interfaces;
 using RentalMotorcycle.Domain.Models;
 using RentalMotorcycle.Infrastructure.Interfaces;
@@ -38,9 +36,11 @@ public class RentalService : IRentalService
 
         _logger.LogInformation(LogMessages.Start(nameForLog));
 
-        if (! await CheckDeliveryManCnh(command.EntregadorId))
+        var checkIsRenting = await CheckMotorcycleIsRenting(command.MotoId);
+
+        if (checkIsRenting)
         {
-            _logger.LogInformation(LogMessages.Finished(nameForLog));
+            _logger.LogError(LogMessages.Finished(nameForLog));
             return false;
         }
 
@@ -105,7 +105,7 @@ public class RentalService : IRentalService
         return result;
     }
 
-    private async Task<bool> CheckDeliveryManCnh(string deliveryManId)
+    public async Task<bool> CheckDeliveryManCnh(string deliveryManId)
     {
         var nameForLog = $"{NameOfClass} {nameof(CheckDeliveryManCnh)}";
 

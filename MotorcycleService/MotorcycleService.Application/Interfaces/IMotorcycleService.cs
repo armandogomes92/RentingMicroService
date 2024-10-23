@@ -8,8 +8,9 @@ namespace MotorcycleService.Application.Interfaces;
 public interface IMotorcycleService
 {
     Task<bool> CreateMotorcycleAsync(CreateMotorcycleCommand command, CancellationToken cancellationToken);
-    Task<IEnumerable<Motorcycle>> GetMotorcyclesAsync(GetMotorcyclesQuery query);
+    Task<IEnumerable<Motorcycle>> GetMotorcyclesAsync();
+    Task<Motorcycle> GetMotorcyclesByPlateAsync(string plate);
     Task<bool> UpdateMotorcycleByIdAsync(UpdateMotorcycleCommand command, CancellationToken cancelationToken);
-    Task<Motorcycle> GetMotorcycleByIdAsync(GetMotorcycleByIdQuery Query);
+    Task<Motorcycle> GetMotorcycleByIdAsync(string id);
     Task<bool> DeleteMotorcycleByIdAsync(DeleteMotorcycleByIdCommand command, CancellationToken cancelationToken);
 }

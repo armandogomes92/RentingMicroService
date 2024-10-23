@@ -7,10 +7,13 @@ public class UpdateDeliveryManCommandValidator : AbstractValidator<UpdateDeliver
 {
     public UpdateDeliveryManCommandValidator()
     {
+        RuleFor(x => x.Identificador)
+            .NotEmpty().WithMessage(Messages.InvalidId);
+
         RuleFor(x => x.ImagemCnh)
-            .NotEmpty().WithMessage(Messages.InvalidData)
+            .NotEmpty().WithMessage(Messages.InvalidCnhImage)
             .Must(IsValidImage)
-            .WithMessage(Messages.InvalidData);
+            .WithMessage(Messages.InvalidCnhImage);
     }
 
     private static bool IsValidImage(byte[] fileBytes)
@@ -19,11 +22,12 @@ public class UpdateDeliveryManCommandValidator : AbstractValidator<UpdateDeliver
         {
             return false;
         }
-        // Verifica se é um arquivo JPEG
-        if (fileBytes[0] == 0xFF && fileBytes[1] == 0xD8 && fileBytes[fileBytes.Length - 2] == 0xFF && fileBytes[fileBytes.Length - 1] == 0xD9)
+        // Verifica se é um arquivo PNG
+        if (fileBytes[0] == 0x89 && fileBytes[1] == 0x50 && fileBytes[2] == 0x4E && fileBytes[3] == 0x47)
         {
             return true;
         }
+
         // Verifica se é um arquivo BMP
         if (fileBytes[0] == 0x42 && fileBytes[1] == 0x4D)
         {

@@ -22,6 +22,21 @@ public class CreateDeliveryManHandler : CommandHandler<CreateDeliveryManCommand>
     {
         _logger.LogInformation(LogMessages.Start($"{NameOfClass}"));
 
+        var checkIfIdentificadorExists = await _deliveryManService.CheckIfExistDeliverymanById(command.Identificador);
+        var checkIfCnpjExists = await _deliveryManService.CheckIfExistDeliverymanByCnpj(command.Cnpj);
+        var checkIfCnhExists = await _deliveryManService.CheckIfExistDeliverymanByCnhNumber(command.NumeroCnh);
+
+        if(checkIfIdentificadorExists || checkIfCnhExists || checkIfCnpjExists)
+        {
+            _logger.LogWarning(LogMessages.Finished(NameOfClass));
+            return new Response
+            {
+                Content = checkIfIdentificadorExists ? new { Mensagem = Messages.IdentificadorExists } :
+                          checkIfCnpjExists ? new { Mensagem = Messages.CnpjExists } :
+                          new { Mensagem = Messages.CnhNumberExists }
+            };
+        }
+
         var result = await _deliveryManService.CreateDeliveryMan(command);
 
         _logger.LogInformation(LogMessages.Finished(NameOfClass));

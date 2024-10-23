@@ -1,5 +1,6 @@
 using DeliveryPilots.Application.Handlers.DeliveryMan.Commands.Create;
 using DeliveryPilots.Application.Handlers.DeliveryMan.Commands.Update;
+using DeliveryPilots.Application.Handlers.DeliveryMan.Queries;
 using DeliveryPilots.Domain.Resources;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -17,23 +18,24 @@ public class DeliveryPilotsController : ControllerBase
     }
 
     [HttpPost()]
-    [ProducesResponseType(typeof(Response), 201)]
-    [ProducesResponseType(typeof(Response), 400)]
     public async Task<IActionResult> Create([FromBody] CreateDeliveryManCommand command)
     {
         var response = await _mediator.Send(command);
+        var mensagemProperty = response.Content?.GetType().GetProperty("Mensagem");
 
-        if (!(bool)response.Content!)
+        if (mensagemProperty != null)
         {
-            return BadRequest(new Response { Content = new { Messagem = Messages.InvalidData } });
+            var mensagemValue = mensagemProperty.GetValue(response.Content) as string;
+            if (mensagemValue == Messages.IdentificadorExists || mensagemValue == Messages.CnpjExists || mensagemValue == Messages.CnhNumberExists)
+            {
+                return NotFound(response.Content);
+            }
         }
 
-        return Created();
+        return StatusCode(201);
     }
 
     [HttpPost("{id}/cnh")]
-    [ProducesResponseType(typeof(Response), 201)]
-    [ProducesResponseType(typeof(Response), 400)]
     public async Task<IActionResult> Update(string id, [FromBody] byte[] imagemCnh)
     {
         UpdateDeliveryManCommand command = new UpdateDeliveryManCommand
@@ -42,25 +44,28 @@ public class DeliveryPilotsController : ControllerBase
             ImagemCnh = imagemCnh
         };
         var response = await _mediator.Send(command);
+        var mensagemProperty = response.Content?.GetType().GetProperty("Mensagem");
 
-        if (!(bool)response.Content!)
+        if (mensagemProperty != null)
         {
-            return BadRequest(new Response { Content = new { Messagem = Messages.InvalidData } });
+            var mensagemValue = mensagemProperty.GetValue(response.Content) as string;
+            if (mensagemValue == Messages.DeliveryManNotFound)
+            {
+                return BadRequest(response.Content);
+            }
         }
 
-        return Ok(response);
+        return StatusCode(201);
     }
 
     [HttpGet("{id}/cnh-tipo")]
-    [ProducesResponseType(typeof(Response), 200)]
-    [ProducesResponseType(typeof(Response), 404)]
     public async Task<IActionResult> GetCnh(string id)
     {
         var response = await _mediator.Send(new GetCategoryOfDeliveryManQuery { Identificador = id });
 
         if (!response.Content!.ToString()!.ToUpper().Contains('A'))
         {
-            return BadRequest(response.Content);
+            return Ok(response.Content);
         }
         return Ok(response.Content);
     }

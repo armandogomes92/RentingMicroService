@@ -1,34 +1,30 @@
-# Acesse https://aka.ms/customizecontainer para saber como personalizar seu contêiner de depuração e como o Visual Studio usa este Dockerfile para criar suas imagens para uma depuração mais rápida.
-
-# Esta fase é usada durante a execução no VS no modo rápido (Padrão para a configuração de Depuração)
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
-WORKDIR /app
-EXPOSE 8080
-EXPOSE 8081
-
-# Esta fase é usada para compilar o projeto de serviço
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 ENV ASPNETCORE_ENVIRONMENT=Development
 
-# Copiar arquivos de projeto e restaurar dependências
 COPY ["DeliveryPilots/DeliveryPilots.csproj", "DeliveryPilots/"]
 COPY ["DeliveryPilots.Application/DeliveryPilots.Application.csproj", "DeliveryPilots.Application/"]
 COPY ["DeliveryPilots.Domain/DeliveryPilots.Domain.csproj", "DeliveryPilots.Domain/"]
 COPY ["DeliveryPilots.Infrastructure/DeliveryPilots.Infrastructure.csproj", "DeliveryPilots.Infrastructure/"]
+COPY ["DeliveryPilots.Tests/DeliveryPilots.Tests.csproj", "DeliveryPilots.Tests/"]
+
 RUN dotnet restore "DeliveryPilots/DeliveryPilots.csproj"
 
-# Copiar todo o código-fonte e construir o projeto
 COPY . .
 WORKDIR "/src/DeliveryPilots"
 RUN dotnet build "DeliveryPilots.csproj" -c Development -o /app/build
 
-# Esta fase é usada para publicar o projeto de serviço a ser copiado para a fase final
-FROM build AS publish
-RUN dotnet publish "DeliveryPilots.csproj" -c Development -o /app/publish /p:UseAppHost=false
+FROM build AS testrunner
+WORKDIR /src
+RUN dotnet test "DeliveryPilots.Tests/DeliveryPilots.Tests.csproj" --no-build --verbosity normal
 
-# Esta fase é usada na produção ou quando executada no VS no modo normal (padrão quando não está usando a configuração de Depuração)
-FROM base AS final
+FROM build AS publish
+RUN dotnet publish "DeliveryPilots.csproj" -c Development -o /app/publish
+
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+
+EXPOSE 80
+
 ENTRYPOINT ["dotnet", "DeliveryPilots.dll"]

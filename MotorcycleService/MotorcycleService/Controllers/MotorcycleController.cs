@@ -29,18 +29,16 @@ public class MotorcycleController : ControllerBase
     }
 
     [HttpPost()]
-    [ProducesResponseType(201)]
-    [ProducesResponseType(typeof(Response), 400)]
     public async Task<IActionResult> Create([FromBody] CreateMotorcycleCommand command)
     {
         var response = await _mediator.Send(command);
 
-        if (!(bool)response.Content!)
+        if (response.Content is not bool result || !(bool)response.Content!)
         { 
-            return BadRequest(response);
+            return BadRequest(response.Content);
         }
 
-        return Created();
+        return StatusCode(201);
     }
 
     [HttpGet()]
@@ -48,36 +46,38 @@ public class MotorcycleController : ControllerBase
     {
         var query = new GetMotorcyclesQuery { Placa = placa };
         var result = await _mediator.Send(query);
-        return Ok(result);
+        return Ok(result.Content);
     }
 
     [HttpPut("{id}/placa")]
-    [ProducesResponseType(typeof(Response), 200)]
-    [ProducesResponseType(typeof(Response), 400)]
     public async Task<IActionResult> Update(string id, [FromBody] UpdateMotorcycleCommand command)
     {
         command.Identificador = id;
         var response = await _mediator.Send(command);
 
-        if (!(bool)response.Content!)
+        if (response.Content is not bool result || !(bool)response.Content!)
         {
-            return BadRequest(response);
+            return BadRequest(response.Content);
         }
-        return Ok(response);
+        var responseMessage = new Response { Content = new { Mensagem = Messages.UpdatePlate } };
+        return Ok(responseMessage.Content);
     }
 
     [HttpGet("{id}")]
-    [ProducesResponseType(typeof(Response), 200)]
-    [ProducesResponseType(typeof(Response), 400)]
-    [ProducesResponseType(typeof(Response), 404)]
     public async Task<IActionResult> GetById(string id)
     {
-        var moto = await _mediator.Send(new GetMotorcycleByIdQuery { Id = id });
-        if (moto == null)
+        var result = await _mediator.Send(new GetMotorcycleByIdQuery { Id = id });
+        var mensagemProperty = result.Content?.GetType().GetProperty("Mensagem");
+
+        if (mensagemProperty != null)
         {
-            return NotFound(moto);
+            var mensagemValue = mensagemProperty.GetValue(result.Content) as string;
+            if (mensagemValue == Messages.MotorcycleNotFound)
+            {
+                return NotFound(result.Content);
+            }
         }
-        return Ok(moto);
+        return Ok(result.Content);
     }
 
 
@@ -88,7 +88,8 @@ public class MotorcycleController : ControllerBase
 
         if (!(bool)response.Content!)
         {
-            return BadRequest(response);
+            var result = new Response { Content = new { Mensagem = Messages.MotorcycleNotFound } };
+            return BadRequest(result.Content);
         }
         return Ok();
     }

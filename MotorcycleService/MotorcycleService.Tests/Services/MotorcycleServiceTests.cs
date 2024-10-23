@@ -1,13 +1,12 @@
 ﻿using MotorcycleService.Application.Handlers.Motorcycle.Commands.Create;
 using MotorcycleService.Application.Handlers.Motorcycle.Commands.Delete;
 using MotorcycleService.Application.Handlers.Motorcycle.Commands.Update;
-using MotorcycleService.Application.Handlers.Motorcycle.Queries;
 using MotorcycleService.Application.Interfaces;
 using MotorcycleService.Domain.Models;
 using MotorcycleService.Domain.Resources;
 using MotorcycleService.Infrastructure.Interfaces;
-using Microsoft.Extensions.Logging;
 using Moq;
+using Microsoft.Extensions.Logging;
 
 namespace MotorcycleService.Tests.Services
 {
@@ -15,17 +14,15 @@ namespace MotorcycleService.Tests.Services
     {
         private readonly Mock<IMotorcycleRepository> _motoRepositoryMock;
         private readonly Mock<IRabbitMqService> _rabbitMqServiceMock;
-        private readonly Mock<ILogger<UpdateMotorcyclePlateHandler>> _loggerMock;
         private readonly IMotorcycleService _motorcycleService;
         private readonly Mock<IRentalService> _rentalServiceMock;
 
-        public MotorcycleServiceTests(Mock<IRentalService> rentalServiceMock)
+        public MotorcycleServiceTests()
         {
             _motoRepositoryMock = new Mock<IMotorcycleRepository>();
             _rabbitMqServiceMock = new Mock<IRabbitMqService>();
-            _loggerMock = new Mock<ILogger<UpdateMotorcyclePlateHandler>>();
-            _motorcycleService = new Application.Services.MotorcycleService(_motoRepositoryMock.Object, _rabbitMqServiceMock.Object, _loggerMock.Object);
-            _rentalServiceMock = rentalServiceMock;
+            _rentalServiceMock = new Mock<IRentalService>();
+            _motorcycleService = new Application.Services.MotorcycleService(_motoRepositoryMock.Object, _rabbitMqServiceMock.Object, Mock.Of<ILogger<UpdateMotorcyclePlateHandler>>(), _rentalServiceMock.Object);
         }
 
         [Fact]
@@ -90,11 +87,11 @@ namespace MotorcycleService.Tests.Services
         [Fact]
         public async Task GetMotorcycleByIdAsync_ShouldReturnMotorcycle_WhenMotorcycleExists()
         {
-            var query = new GetMotorcycleByIdQuery { Id = "1" };
-            var motorcycle = new Motorcycle { Identificador = query.Id };
-            _motoRepositoryMock.Setup(repo => repo.GetMotorcycleByIdAsync(query.Id)).ReturnsAsync(motorcycle);
+            var id = "1";
+            var motorcycle = new Motorcycle { Identificador = id };
+            _motoRepositoryMock.Setup(repo => repo.GetMotorcycleByIdAsync(id)).ReturnsAsync(motorcycle);
 
-            var result = await _motorcycleService.GetMotorcycleByIdAsync(query);
+            var result = await _motorcycleService.GetMotorcycleByIdAsync(id);
 
             Assert.Equal(motorcycle, result);
         }
@@ -102,10 +99,10 @@ namespace MotorcycleService.Tests.Services
         [Fact]
         public async Task GetMotorcycleByIdAsync_ShouldReturnNull_WhenMotorcycleDoesNotExist()
         {
-            var query = new GetMotorcycleByIdQuery { Id = "1" };
-            _motoRepositoryMock.Setup(repo => repo.GetMotorcycleByIdAsync(query.Id)).ReturnsAsync((Motorcycle?)null);
+            var id = "1";
+            _motoRepositoryMock.Setup(repo => repo.GetMotorcycleByIdAsync(id)).ReturnsAsync((Motorcycle?)null);
 
-            var result = await _motorcycleService.GetMotorcycleByIdAsync(query);
+            var result = await _motorcycleService.GetMotorcycleByIdAsync(id);
 
             Assert.Null(result);
         }

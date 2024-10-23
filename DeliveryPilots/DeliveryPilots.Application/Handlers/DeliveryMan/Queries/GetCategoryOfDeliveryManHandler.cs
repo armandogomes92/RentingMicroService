@@ -3,9 +3,8 @@ using DeliveryPilots.Application.Interfaces;
 using DeliveryPilots.Domain.Resources;
 using DeliveryPilots.Infrastructure.Logging;
 using Microsoft.Extensions.Logging;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
-namespace DeliveryPilots.Application.Handlers.DeliveryMan.Commands.Create;
+namespace DeliveryPilots.Application.Handlers.DeliveryMan.Queries;
 
 public class GetCategoryOfDeliveryManHandler : QueryHandler<GetCategoryOfDeliveryManQuery>
 {
@@ -25,11 +24,11 @@ public class GetCategoryOfDeliveryManHandler : QueryHandler<GetCategoryOfDeliver
 
         var result = await _deliveryManService.GetCnhCategoryAsync(query.Identificador);
 
-        if (String.IsNullOrEmpty(result))
+        if (string.IsNullOrEmpty(result))
         {
             _logger.LogError(LogMessages.Finished($"{NameOfClass}"));
 
-            return new Response { Content = false };
+            return new Response { Content = 'N' };
         }
 
         _logger.LogInformation(LogMessages.Finished(NameOfClass));

@@ -21,13 +21,10 @@ public class DeleteMotorcycleByIdHandlerTests
     [Fact]
     public async Task Handle_ShouldCallDeleteMotorcycleByIdAsync()
     {
-
         var command = new DeleteMotorcycleByIdCommand { Id = "1" };
         _motorcycleServiceMock.Setup(service => service.DeleteMotorcycleByIdAsync(command, CancellationToken.None)).ReturnsAsync(true);
 
-
         var result = await _handler.Handle(command, CancellationToken.None);
-
 
         _motorcycleServiceMock.Verify(service => service.DeleteMotorcycleByIdAsync(command, CancellationToken.None), Times.Once);
     }
@@ -35,47 +32,38 @@ public class DeleteMotorcycleByIdHandlerTests
     [Fact]
     public async Task Handle_ShouldReturnSuccessResponse_WhenDeletionIsSuccessful()
     {
-
         var command = new DeleteMotorcycleByIdCommand { Id = "1" };
         _motorcycleServiceMock.Setup(service => service.DeleteMotorcycleByIdAsync(command, CancellationToken.None)).ReturnsAsync(true);
 
-
         var result = await _handler.Handle(command, CancellationToken.None);
 
-
-        Assert.Empty(result.Messagem);
+        Assert.True((bool)result.Content!);
     }
 
     [Fact]
     public async Task Handle_ShouldReturnErrorResponse_WhenDeletionFails()
     {
-
         var command = new DeleteMotorcycleByIdCommand { Id = "1" };
         _motorcycleServiceMock.Setup(service => service.DeleteMotorcycleByIdAsync(command, CancellationToken.None)).ReturnsAsync(false);
 
-
         var result = await _handler.Handle(command, CancellationToken.None);
 
-
-        Assert.Equal("Erro ao deletar moto.", result.Messagem);
+        Assert.False((bool)result.Content!);
     }
 
     [Fact]
     public async Task Handle_ShouldLogInformation()
     {
-
         var command = new DeleteMotorcycleByIdCommand { Id = "1" };
         _motorcycleServiceMock.Setup(service => service.DeleteMotorcycleByIdAsync(command, CancellationToken.None)).ReturnsAsync(true);
 
-
         await _handler.Handle(command, CancellationToken.None);
 
-
         _loggerMock.Verify(logger => logger.Log(
-        LogLevel.Information,
-        It.IsAny<EventId>(),
-        It.Is<It.IsAnyType>((v, t) => v.ToString().Contains(nameof(DeleteMotorcycleByIdHandler)) == true),
-        null,
-        It.IsAny<Func<It.IsAnyType, Exception?, string>>()), Times.Exactly(2));
+            LogLevel.Information,
+            It.IsAny<EventId>(),
+            It.Is<It.IsAnyType>((v, t) => v.ToString().Contains(nameof(DeleteMotorcycleByIdHandler))),
+            null,
+            It.IsAny<Func<It.IsAnyType, Exception?, string>>()), Times.Exactly(2));
     }
 }

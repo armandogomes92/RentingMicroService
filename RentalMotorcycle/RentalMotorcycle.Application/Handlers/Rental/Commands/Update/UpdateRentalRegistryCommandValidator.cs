@@ -7,10 +7,6 @@ public class UpdateRentalRegistryCommandValidator : AbstractValidator<UpdateRent
 {
     public UpdateRentalRegistryCommandValidator()
     {
-        RuleFor(x => x.Identificador)
-            .NotEmpty()
-            .WithMessage(Messages.InvalidData);
-
         RuleFor(x => x.DataDevolucao)
             .NotEmpty()
             .WithMessage(Messages.InvalidData);

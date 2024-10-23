@@ -1,9 +1,11 @@
 ﻿using BFFService.Models;
-using BFFService.Ressources;
 using BFFService.Services;
 using Microsoft.AspNetCore.Mvc;
+using System.Text;
+using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Text.Unicode;
 
 namespace BFFService.Controllers
 {
@@ -21,7 +23,8 @@ namespace BFFService.Controllers
             _jsonSerializerOptions = new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true,
-                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+                Encoder = JavaScriptEncoder.Create(UnicodeRanges.All)
             };
         }
 
@@ -33,15 +36,14 @@ namespace BFFService.Controllers
         {
 
             var response = await _rentalService.Post(command);
-            if (response.IsSuccessStatusCode)
+            if ((int)response.StatusCode != 201)
             {
-                return Created();
+                string rent = await response.Content.ReadAsStringAsync();
+                var resultEncoding = Encoding.UTF8.GetBytes(rent);
+                var result = JsonSerializer.Deserialize<string>(resultEncoding, _jsonSerializerOptions);
+                return StatusCode((int)response.StatusCode, result);
             }
-
-            string rent = await response.Content.ReadAsStringAsync();
-            var result = JsonSerializer.Deserialize<Response>(rent, _jsonSerializerOptions);
-
-            return StatusCode((int)response.StatusCode, result!.Content);
+            return StatusCode((int)response.StatusCode);
         }
 
         /// <summary>
@@ -52,9 +54,9 @@ namespace BFFService.Controllers
         {
             var response = await _rentalService.Get(id);
             string rent = await response.Content.ReadAsStringAsync();
-            var result = JsonSerializer.Deserialize<Response>(rent, _jsonSerializerOptions);
+            var result = JsonSerializer.Deserialize<object>(rent, _jsonSerializerOptions);
 
-            return StatusCode((int)response.StatusCode, result!.Content);
+            return StatusCode((int)response.StatusCode, result);
         }
 
         /// <summary>
@@ -66,14 +68,9 @@ namespace BFFService.Controllers
 
             var response = await _rentalService.Put(id, locacao);
             string rent = await response.Content.ReadAsStringAsync();
+            var result = JsonSerializer.Deserialize<object>(rent, _jsonSerializerOptions);
 
-            if (!response.IsSuccessStatusCode)
-            {
-                var badResult = new Response { Content = new { Mensagem = Messages.IvalidData } };
-                return BadRequest(badResult.Content);
-            }
-            var result = new Response { Content = new { Mensagem = Messages.ReturneredDate } };
-            return Ok(result.Content);
+            return StatusCode((int)response.StatusCode, result);
         }
     }
 }
